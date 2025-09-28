@@ -1,0 +1,161 @@
+/* Header Responsive Styles for Sidebar Integration */
+
+/* Smooth transitions for all header elements */
+.header-responsive {
+  transition: all 0.2s ease-in-out;
+}
+
+/* When sidebar is collapsed on desktop */
+.header-collapsed {
+  width: 100%;
+  margin-left: 0;
+}
+
+/* When sidebar is expanded on desktop */
+.header-expanded {
+  width: 100%;
+  margin-left: 0;
+}
+
+/* Mobile header styles */
+.header-mobile {
+  width: 100%;
+  margin-left: 0;
+}
+
+/* Logo text animation */
+.logo-text {
+  transition: opacity 0.2s ease-in-out, transform 0.2s ease-in-out;
+}
+
+.logo-text-hidden {
+  opacity: 0;
+  transform: translateX(-10px);
+}
+
+.logo-text-visible {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+/* Search bar responsive adjustments */
+.search-container {
+  transition: all 0.2s ease-in-out;
+}
+
+.search-collapsed {
+  max-width: 12rem;
+  padding: 0 0.5rem;
+}
+
+.search-expanded {
+  max-width: 24rem;
+  padding: 0 1.5rem;
+}
+
+/* Button group responsive adjustments */
+.button-group {
+  transition: all 0.2s ease-in-out;
+}
+
+.button-collapsed {
+  gap: 0.25rem;
+}
+
+.button-expanded {
+  gap: 0.5rem;
+}
+
+/* Notification button responsive behavior */
+.notification-button {
+  transition: all 0.2s ease-in-out;
+}
+
+.notification-button-hidden {
+  display: none;
+}
+
+@media (min-width: 640px) {
+  .notification-button-hidden {
+    display: flex;
+  }
+}
+
+/* User button responsive adjustments */
+.user-button {
+  transition: all 0.2s ease-in-out;
+}
+
+.user-button-collapsed {
+  height: 1.75rem;
+  width: 1.75rem;
+}
+
+.user-button-expanded {
+  height: 2rem;
+  width: 2rem;
+}
+
+/* Header height adjustments for different states */
+.header-height {
+  height: 4rem;
+}
+
+@media (max-width: 768px) {
+  .header-height {
+    height: 3.5rem;
+  }
+}
+
+/* Sidebar trigger button positioning */
+.sidebar-trigger {
+  transition: all 0.2s ease-in-out;
+}
+
+.sidebar-trigger-collapsed {
+  margin-left: -0.25rem;
+}
+
+.sidebar-trigger-expanded {
+  margin-left: -0.25rem;
+}
+
+/* Responsive padding adjustments */
+.header-padding {
+  padding: 0 1rem;
+}
+
+@media (min-width: 768px) {
+  .header-padding {
+    padding: 0 1.5rem;
+  }
+}
+
+/* Content area adjustments based on sidebar state */
+.content-area {
+  transition: margin-left 0.2s ease-in-out;
+}
+
+.content-area-sidebar-expanded {
+  margin-left: 0;
+}
+
+.content-area-sidebar-collapsed {
+  margin-left: 0;
+}
+
+/* Mobile-specific adjustments */
+@media (max-width: 768px) {
+  .header-mobile-optimized {
+    padding: 0 0.75rem;
+  }
+  
+  .search-mobile {
+    max-width: 100%;
+  }
+  
+  .button-group-mobile {
+    gap: 0.25rem;
+  }
+}
+

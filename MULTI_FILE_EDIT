@@ -1,0 +1,92 @@
+export type ApiResponse<T> = {
+  data: T
+  message?: string
+}
+export type Course = {
+  id: string
+  title: string
+}
+export type User = {
+  id: string
+  name: string
+  email: string
+}
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+import { api } from "@/lib/api"
+
+export const courseService = {
+  list: () => api.get<Array<{ id: string; title: string }>>("/api/courses"),
+}
+import { api } from "@/lib/api"
+
+export const studentService = {
+  list: () => api.get<Array<{ id: string; name: string }>>("/api/students"),
+  get: (id: string) => api.get<{ id: string; name: string }>(`/api/students/${id}`),
+}
+import { api } from "@/lib/api"
+
+export const authService = {
+  login: (email: string, password: string) => api.post<{ token: string }>("/api/login", { email, password }),
+  me: () => api.get<{ id: string; name: string; email: string }>("/api/me"),
+}
+import { create } from "zustand"
+
+type User = { id: string; name: string; email: string } | null
+
+type State = {
+  user: User
+  setUser: (user: User) => void
+}
+
+export const useUserStore = create<State>((set) => ({
+  user: null,
+  setUser: (user) => set({ user }),
+}))
+export function delay(ms: number) {
+  return new Promise((resolve) => setTimeout(resolve, ms))
+}
+
+export function formatDate(date: Date) {
+  return new Intl.DateTimeFormat("ar-EG", { dateStyle: "medium", timeStyle: "short" }).format(date)
+}
+export function parseJwt(token: string): unknown {
+  try {
+    const base64Url = token.split(".")[1]
+    const base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/")
+    return JSON.parse(Buffer.from(base64, "base64").toString("utf8"))
+  } catch {
+    return null
+  }
+}
+export const api = {
+  get: async <T>(url: string): Promise<T> => {
+    const res = await fetch(url, { credentials: "include" })
+    if (!res.ok) throw new Error(`GET ${url} failed`)
+    return res.json()
+  },
+  post: async <T>(url: string, body: unknown): Promise<T> => {
+    const res = await fetch(url, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+      body: JSON.stringify(body),
+    })
+    if (!res.ok) throw new Error(`POST ${url} failed`)
+    return res.json()
+  },
+}
+export function useAuth() {
+  return {
+    isAuthenticated: false,
+    user: null as null | { id: string; name: string; email: string },
+    login: async (_email: string, _password: string) => {},
+    logout: async () => {},
+  }
+}
+
+
+
+
+

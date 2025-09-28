@@ -1,0 +1,62 @@
+[
+    {
+      "UserId": 1,
+      "UserName": "أحمد علي",
+      "Email": "ahmed.ali@example.com",
+      "RoleID": 1,
+      "Phone": "+967-771122334",
+      "Password": "hashed_password_1",
+      "DateOfBirth": "1985-05-15T00:00:00Z",
+      "IsActive": true,
+      "Address": "صنعاء، حي السنينة",
+      "gender": "ذكر",
+      "Id": 101,
+      "SpecialtyId": 1,
+      "Salary": 1500.50
+    },
+    {
+      "UserId": 2,
+      "UserName": "فاطمة محمد",
+      "Email": "fatima.mohamed@example.com",
+      "RoleID": 1,
+      "Phone": "+967-772233445",
+      "Password": "hashed_password_2",
+      "DateOfBirth": "1980-08-20T00:00:00Z",
+      "IsActive": true,
+      "Address": "صنعاء، حي التحرير",
+      "gender": "أنثى",
+      "Id": 102,
+      "SpecialtyId": 2,
+      "Salary": 1800.75
+    },
+    {
+      "UserId": 3,
+      "UserName": "سعيد سالم",
+      "Email": "saeed.salem@example.com",
+      "RoleID": 1,
+      "Phone": "+967-773344556",
+      "Password": "hashed_password_3",
+      "DateOfBirth": "1992-03-10T00:00:00Z",
+      "IsActive": false,
+      "Address": "صنعاء، حي الأصبحي",
+      "gender": "ذكر",
+      "Id": 103,
+      "SpecialtyId": 3,
+      "Salary": 1200.00
+    },
+    {
+      "UserId": 4,
+      "UserName": "ليلى خالد",
+      "Email": "layla.khaled@example.com",
+      "RoleID": 1,
+      "Phone": "+967-774455667",
+      "Password": "hashed_password_4",
+      "DateOfBirth": "1990-11-25T00:00:00Z",
+      "IsActive": true,
+      "Address": "صنعاء، شارع الزبيري",
+      "gender": "أنثى",
+      "Id": 104,
+      "SpecialtyId": 4,
+      "Salary": 1450.25
+    }
+  ]

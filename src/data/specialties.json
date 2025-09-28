@@ -1,0 +1,18 @@
+[
+    {
+      "SpecialtyId": 1,
+      "SpecialtyName": "الرياضيات"
+    },
+    {
+      "SpecialtyId": 2,
+      "SpecialtyName": "اللغة العربية"
+    },
+    {
+      "SpecialtyId": 3,
+      "SpecialtyName": "الفيزياء"
+    },
+    {
+      "SpecialtyId": 4,
+      "SpecialtyName": "الكيمياء"
+    }
+  ]
