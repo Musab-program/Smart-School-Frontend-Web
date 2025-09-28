@@ -1,6 +1,6 @@
 // File: components/students/StudentsPage.js
 import { DashboardCards } from "./DashboardCards";
-import { StudentsTable } from "./StudentsTable";
+import { TeacherTable } from "./TeacherTable";
 import React from "react";
 
 export default function TeacherPage() {
