@@ -1,6 +1,6 @@
 // File: components/students/StudentsPage.js
-import { DashboardCards } from "./DashboardCards";
-import { StudentsTable } from "./StudentsTable";
+import  DashboardCards  from "./DashboardCards";
+// import { StudentsTable } from "./StudentsTable";
 import React from "react";
 
 export default function TeacherPage() {
@@ -12,6 +12,7 @@ export default function TeacherPage() {
 
       <div>
         <h2> فرز المعلمين</h2>
+        <DashboardCards/>
       </div>
 
       <div>

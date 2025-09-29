@@ -73,6 +73,7 @@ const TABLE_ROWS = [
 ];
 
 export function TeacherTable() {
+  
   return (
     <Card className="h-full w-full shadow-lg">
       <CardHeader floated={false} shadow={false} className="rounded-none bg-white">
