@@ -4,4 +4,5 @@ type User = {
   name:string;
   email:string;
   phone:string;
+  IsActive:boolean;
 }
