@@ -1,0 +1,50 @@
+[
+  {
+    "id": 1,
+    "name": "علي سليم أحمد محمد",
+    "email": "ali@gmail.com",
+    "phone": "0599999999",
+    "status": "مفعل",
+    "relationship": "أب"
+  },
+  {
+    "id": 2,
+    "name": "فاطمة خالد إبراهيم",
+    "email": "fatima@example.com",
+    "phone": "0588888888",
+    "status": "غير مفعل",
+    "relationship": "أم"
+  },
+  {
+    "id": 3,
+    "name": "أمل محمد العلي",
+    "email": "saad@test.com",
+    "phone": "0577777777",
+    "status": "مفعل",
+    "relationship": "أم"
+  },
+  {
+    "id": 4,
+    "name": "حامد محمد سلوان",
+    "email": "dfjdfal@test.com",
+    "phone": "0577777777",
+    "status": "غير مفعل",
+    "relationship": "أب"
+  },
+  {
+    "id": 5,
+    "name": "سعد محمد العلي",
+    "email": "asdfjl@test.com",
+    "phone": "0577777777",
+    "status": "مفعل",
+    "relationship": "أب"
+  },
+  {
+    "id": 6,
+    "name": "سعاد محمد العلي",
+    "email": "sdlfjdljf@test.com",
+    "phone": "0577777777",
+    "status": "غير مفعل",
+    "relationship": "أم"
+  }
+]

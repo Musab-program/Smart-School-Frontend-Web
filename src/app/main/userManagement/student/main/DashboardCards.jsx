@@ -14,7 +14,7 @@ export function DashboardCards() {
   return (
     <div className="grid gap-4 md:grid-cols-3 mb-6">
       {stats.map((stat, index) => (
-        <Card key={index} className="drop-shadow-lg">
+        <Card key={index} className="drop-shadow-lg hover:shadow-lg hover:shadow-gray-900/20">
           <CardBody className="flex items-center gap-4">
             <div className={`p-3 rounded-full ${stat.color}`}>
               {stat.icon}

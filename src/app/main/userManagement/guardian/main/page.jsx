@@ -1,6 +1,6 @@
 // File: components/students/StudentsPage.js
 import { DashboardCards } from "./DashboardCards";
-import { GuardianTable } from "./GuardianTable";
+import GuardianTable from "./GuardianTable";
 import React from "react";
 
 export default function StudentsPage() {
