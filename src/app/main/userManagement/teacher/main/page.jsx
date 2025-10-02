@@ -1,8 +1,7 @@
-"use client";
-import  DashboardCards  from "./DashboardCards";
-import  {TeachersTable}  from "./TeacherTable";
+// File: components/students/StudentsPage.js
+import { DashboardCards } from "./DashboardCards";
+import { TeacherTable } from "./TeacherTable";
 import { getTeacherData } from '@/lib/ready-data/teacher-data';
-
 import React from "react";
 
 export default async function TeacherPage() {

@@ -215,7 +215,7 @@ export default function Page() {
               <Button
                 type="submit"
                 disabled={submitting}
-                className="w-full sm:w-auto px-6 py-2 text-white font-semibold bg-lime-700 rounded-lg hover:bg-lime-800 transition-colors"
+                className="w-full sm:w-auto px-6 py-2 text-white font-semibold bg-lime-800 rounded-lg hover:bg-lime-900 transition-colors"
               >
                 {submitting ? "جارِ الحفظ..." : "حفظ"}
               </Button>
