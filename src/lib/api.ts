@@ -1,8 +1,29 @@
 import { Role } from "@/types/role";
 import { Specialty } from "@/types/specialty";
 import { Teacher } from "@/types/teacher";
+import { isUtf8 } from "buffer";
+import * as fs from 'fs/promises'; 
+import path from 'path'; 
+import { json } from "stream/consumers";
+
+function getDatePath(fileName:string) {
+  
+  return path.join(process.cwd(), "src/data", fileName);
+}
 
  async function fetchData<T>(fileName:string): Promise<T> {
+  const filePath = getDatePath(fileName);
+
+
+  try{
+      const fileContent = await fs.readFile(filePath, {encoding: 'utf-8'})
+      return JSON.parse(fileContent);
+  }
+  catch (error){
+    console.error(`Error reading mock data file: ${fileName}`, error);
+    throw new Error(`Could not load mock data for ${fileName}. Check file path.`);
+  }
+
   const response = await fetch(`/src/data/${fileName}`)
 
   if(!response.ok){

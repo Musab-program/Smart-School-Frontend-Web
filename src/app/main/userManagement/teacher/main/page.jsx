@@ -1,13 +1,16 @@
 // File: components/students/StudentsPage.js
 import { DashboardCards } from "./DashboardCards";
 import { TeacherTable } from "./TeacherTable";
+import { getTeacherData } from '@/lib/ready-data/teacher-data';
 import React from "react";
 
-export default function TeacherPage() {
+export default async function TeacherPage() {
+  const teacherData = await getTeacherData();
   return (
     <div className="">
       <div>
         <h2>إحصائيات المعلمين</h2>
+        <DashboardCards/>
       </div>
 
       <div>
@@ -16,6 +19,9 @@ export default function TeacherPage() {
 
       <div>
         <h2>جدول المعلمين</h2>
+        <TeachersTable teachers={teacherData.teachers} 
+        specialties={teacherData.specialties}
+        />
       </div>
 
     </div>

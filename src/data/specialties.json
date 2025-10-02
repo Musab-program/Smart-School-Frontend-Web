@@ -1,18 +1,22 @@
 [
     {
       "SpecialtyId": 1,
-      "SpecialtyName": "الرياضيات"
+      "SpecialtyName": "الرياضيات",
+      "Qualifacation":"بكالريوس"
     },
     {
       "SpecialtyId": 2,
-      "SpecialtyName": "اللغة العربية"
+      "SpecialtyName": "اللغة العربية",
+      "Qualifacation":"ماجستير"
     },
     {
       "SpecialtyId": 3,
       "SpecialtyName": "الفيزياء"
+      ,"Qualifacation":"ماجستير"
     },
     {
       "SpecialtyId": 4,
-      "SpecialtyName": "الكيمياء"
+      "SpecialtyName": "الكيمياء",
+      "Qualifacation":"دكتوراة"
     }
   ]
