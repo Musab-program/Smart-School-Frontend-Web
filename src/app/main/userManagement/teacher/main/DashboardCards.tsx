@@ -1,18 +1,10 @@
-import { Teacher } from '@/types/teacher';
-import { Specialty } from '@/types/specialty';
 import { UserStar, Users, UserMinus } from 'lucide-react';
-import { getTeacher } from '@/lib/api';
-import { getSpecialty } from '@/lib/api';
 import { Card, CardHeader, CardTitle } from '@/components/ui/card';
+import { getTeacherData } from '@/lib/ready-data/teacher-data';
 
 const DashboardCards = async () => {
-  const teachers: Teacher[] = await getTeacher();
-  const specialties: Specialty[] = await getSpecialty();
-  const totalTeachers = teachers.length;
-  const activeTeachers = teachers.filter(t => t.IsActive).length;
-  const inactiveTeachers = teachers.filter(t => !t.IsActive).length;
-  const totalSpecialties = specialties.length;
-  const culomnTable = teachers.keys
+  const teacherData = await getTeacherData();
+
   return (
     <div className="p-6">
       <h1 className="text-3xl font-bold mb-8">إدارة المعلمين</h1>
@@ -24,7 +16,7 @@ const DashboardCards = async () => {
             <Users className='w-10 h-10  text-blue-700 ' />
             <CardTitle className="text-lg font-sm">
               إجمالي المعلمين
-              <br /><div className="text-2xl font-bold">{totalTeachers}</div>
+              <br /><div className="text-2xl font-bold">{teacherData.totalTeachers}</div>
             </CardTitle>
           </CardHeader>
         </Card>
@@ -33,7 +25,7 @@ const DashboardCards = async () => {
             <UserStar className='w-10 h-10  text-green-700 ' />
             <CardTitle className="text-lg font-sm">
               معلمون نشطون
-              <br /><div className="text-2xl font-bold">{activeTeachers}</div>
+              <br /><div className="text-2xl font-bold">{teacherData.activeTeachers}</div>
             </CardTitle>
           </CardHeader>
         </Card>
@@ -42,19 +34,11 @@ const DashboardCards = async () => {
             <UserMinus className='w-10 h-10  text-red-700 ' />
             <CardTitle className="text-lg font-sm">
               غير نشطين
-              <br /><div className="text-2xl font-bold">{inactiveTeachers}</div>
+              <br /><div className="text-2xl font-bold">{teacherData.inactiveTeachers}</div>
             </CardTitle>
           </CardHeader>
         </Card>
       </div>
-      <p>
-        {/* {
-          culomnTable.forEach(column => {
-            column
-          });
-          
-        } */}
-      </p>
     </div>
   )
 }

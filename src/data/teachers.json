@@ -10,7 +10,7 @@
       "IsActive": true,
       "Address": "صنعاء، حي السنينة",
       "gender": "ذكر",
-      "Id": 101,
+      "Id": 1,
       "SpecialtyId": 1,
       "Salary": 1500.50
     },
@@ -25,7 +25,7 @@
       "IsActive": true,
       "Address": "صنعاء، حي التحرير",
       "gender": "أنثى",
-      "Id": 102,
+      "Id": 2,
       "SpecialtyId": 2,
       "Salary": 1800.75
     },
@@ -40,7 +40,7 @@
       "IsActive": false,
       "Address": "صنعاء، حي الأصبحي",
       "gender": "ذكر",
-      "Id": 103,
+      "Id": 3,
       "SpecialtyId": 3,
       "Salary": 1200.00
     },
@@ -55,7 +55,7 @@
       "IsActive": true,
       "Address": "صنعاء، شارع الزبيري",
       "gender": "أنثى",
-      "Id": 104,
+      "Id": 4,
       "SpecialtyId": 4,
       "Salary": 1450.25
     }
