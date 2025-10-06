@@ -1,10 +1,12 @@
-import { Button } from '@/components/ui/button'
 import React from 'react'
+import { DataTableDemo } from './grid'
+
+
 
 const AdminPage = () => {
   return (
     <div>
-        <Button variant="default">تجربة زر shadcn</Button>
+      <DataTableDemo />
     </div>
   )
 }

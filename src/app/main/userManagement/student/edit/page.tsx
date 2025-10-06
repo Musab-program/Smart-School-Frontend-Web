@@ -3,12 +3,7 @@
 import ClickSpark from "@/components/ClickSpark";
 import React, { useRef, useState } from "react";
 
-import {
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { CardContent } from "@/components/ui/card";
 
 import {
   Select,
