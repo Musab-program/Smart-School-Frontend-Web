@@ -1,29 +1,26 @@
 // components/TeachersTable.tsx
 
 import React from 'react';
-// استيراد واجهات البيانات لضمان الأمان في TypeScript
 import {  Specialty } from '@/types/specialty'; 
 import {  Teacher } from '@/types/teacher'; 
-// استيراد مكونات الجدول من shadcn/ui
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-// استيراد أيقونات الإجراءات والترتيب من Lucide
 import { Pencil, Trash2, ArrowUp, ArrowDown } from 'lucide-react';
 // استيراد مكون الزر من shadcn/ui
 import { Button } from '@/components/ui/button'; 
 
-// رؤوس الأعمدة: تحدد الترتيب والمفتاح لكل عمود
+// رؤوس الأعمدة: تحدد الترتيب والمفتاح لكل عمود (مُعكس الترتيب)
 const TABLE_HEAD = [
-  { label: "الرقم", key: "UserId" },
-  { label: "المعلم", key: "UserName" },
-  { label: "البريد الإلكتروني", key: "Email" },
-  { label: "التلفون", key: "Phone" },
-  { label: "التخصص", key: "SpecialtyId" },
-  { label: "المؤهل", key: "Qualification" }, // المؤهل مربوط بالتخصص
-  { label: "الحالة", key: "IsActive" },
-  { label: "الجنس", key: "gender" },
-  { label: "الراتب", key: "Salary" },
-  { label: "تعديل", key: "edit_action" }, // عمود إجراء التعديل
   { label: "حذف", key: "delete_action" }, // عمود إجراء الحذف
+  { label: "تعديل", key: "edit_action" }, // عمود إجراء التعديل
+  { label: "الراتب", key: "Salary" },
+  { label: "الجنس", key: "gender" },
+  { label: "الحالة", key: "IsActive" },
+  { label: "المؤهل", key: "Qualification" }, // المؤهل مربوط بالتخصص
+  { label: "التخصص", key: "SpecialtyId" },
+  { label: "التلفون", key: "Phone" },
+  { label: "البريد الإلكتروني", key: "Email" },
+  { label: "المعلم", key: "UserName" },
+  { label: "الرقم", key: "UserId" },
 ];
 
 // تحديد خصائص المكون
