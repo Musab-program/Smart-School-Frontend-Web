@@ -1,7 +1,11 @@
 "use client";
 
+import guardiansData from "../../../../../data/guardian.json";
+
+import { useSearchParams } from "next/navigation";
+
 import * as React from "react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import {
   Card,
@@ -31,6 +35,10 @@ type CreateGuardianPayload = {
 };
 
 export default function Page() {
+  // 1. استدعاء الدالة للحصول على الكائن
+  const searchParams = useSearchParams();
+  // 2. استخدام .get() على الكائن
+  const id = searchParams.get("id");
   const router = useRouter();
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -40,11 +48,28 @@ export default function Page() {
     fullName: "",
     phone: "",
     email: "",
-    relation: "father",
+    relation: "",
     nationalId: "",
     address: "",
     notes: "",
   });
+
+  useEffect(() => {
+    if (id) {
+      const guardian = guardiansData.find((g) => g.id === Number(id));
+      if (guardian) {
+        setForm({
+          fullName: guardian.name,
+          phone: guardian.phone,
+          email: guardian.email,
+          relation: guardian.relationship,
+          nationalId: guardian.nationalId,
+          address: guardian.address,
+          notes: guardian.notes || "",
+        });
+      }
+    }
+  }, [id]);
 
   const handleChange =
     (field: keyof CreateGuardianPayload) =>
@@ -79,12 +104,12 @@ export default function Page() {
         throw new Error(data?.message || "تعذر إضافة ولي الأمر");
       }
 
-      setSuccess("تمت إضافة ولي الأمر بنجاح");
+      setSuccess(id ? "تم تحديث بيانات ولي الأمر" : "تمت إضافة ولي الأمر بنجاح");
       setForm({
         fullName: "",
         phone: "",
         email: "",
-        relation: "father",
+        relation: "",
         nationalId: "",
         address: "",
         notes: "",
@@ -101,9 +126,11 @@ export default function Page() {
     <div className="container mx-auto max-w-4xl px-4 py-6" dir="rtl">
       <Card>
         <CardHeader>
-          <CardTitle>إضافة ولي أمر</CardTitle>
+          <CardTitle>{id ? "تعديل ولي أمر" : "إضافة ولي أمر"}</CardTitle>
           <CardDescription>
-            أدخل بيانات ولي الأمر ثم اضغط على حفظ
+          {id
+              ? "يمكنك تعديل بيانات ولي الأمر هنا"
+              : "أدخل بيانات ولي الأمر ثم اضغط على حفظ"}
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -132,7 +159,7 @@ export default function Page() {
                   id="phone"
                   value={form.phone}
                   onChange={handleChange("phone")}
-                  placeholder="مثال: 9665xxxxxxxx"
+                  placeholder="مثال: 7777777777"
                   className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-lime-700"
                   inputMode="tel"
                   required
@@ -159,11 +186,11 @@ export default function Page() {
                     <SelectValue placeholder="اختر صلة القرابة" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="father">أب</SelectItem>
-                    <SelectItem value="mother">أم</SelectItem>
-                    <SelectItem value="brother">أخ</SelectItem>
-                    <SelectItem value="sister">أخت</SelectItem>
-                    <SelectItem value="guardian">ولي أمر آخر</SelectItem>
+                    <SelectItem value="أب">أب</SelectItem>
+                    <SelectItem value="أم">أم</SelectItem>
+                    <SelectItem value="أخ">أخ</SelectItem>
+                    <SelectItem value="أخت">أخت</SelectItem>
+                    <SelectItem value="ولي أمر آخر">ولي أمر آخر</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -217,7 +244,11 @@ export default function Page() {
                 disabled={submitting}
                 className="w-full sm:w-auto px-6 py-2 text-white font-semibold bg-lime-800 rounded-lg hover:bg-lime-900 transition-colors"
               >
-                {submitting ? "جارِ الحفظ..." : "حفظ"}
+                {submitting
+                  ? "جارِ الحفظ..."
+                  : id
+                  ? "تحديث"
+                  : "حفظ"}
               </Button>
               <Button
                 type="button"

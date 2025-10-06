@@ -3,48 +3,67 @@
     "id": 1,
     "name": "علي سليم أحمد محمد",
     "email": "ali@gmail.com",
-    "phone": "0599999999",
+    "phone": "777300969",
     "status": "مفعل",
-    "relationship": "أب"
+    "relationship": "أب",
+    "address": "صعناء - جولة الولاعة",
+    "nationalId": "1010210021",
+    "notes": ""
   },
   {
     "id": 2,
     "name": "فاطمة خالد إبراهيم",
     "email": "fatima@example.com",
-    "phone": "0588888888",
+    "phone": "772548522",
     "status": "غير مفعل",
-    "relationship": "أم"
+    "relationship": "أم",
+    "address": "صعناء - جولة المرور",
+    "nationalId": "5451687845",
+    "notes": ""
+    
   },
   {
     "id": 3,
     "name": "أمل محمد العلي",
     "email": "saad@test.com",
-    "phone": "0577777777",
+    "phone": "777554221",
     "status": "مفعل",
-    "relationship": "أم"
+    "relationship": "أم",
+    "address": "صعناء - السنينة",
+    "nationalId": "1010214845",
+    "notes": ""
   },
   {
     "id": 4,
     "name": "حامد محمد سلوان",
     "email": "dfjdfal@test.com",
-    "phone": "0577777777",
+    "phone": "778442115",
     "status": "غير مفعل",
-    "relationship": "أب"
+    "relationship": "أب",
+    "address": "صعناء -  المصباحي",
+    "nationalId": "1088585222",
+    "notes": ""
   },
   {
     "id": 5,
     "name": "سعد محمد العلي",
     "email": "asdfjl@test.com",
-    "phone": "0577777777",
+    "phone": "789441450",
     "status": "مفعل",
-    "relationship": "أب"
+    "relationship": "أب",
+    "address": "صعناء - الستين الشمالي",
+    "nationalId": "48946552",
+    "notes": ""
   },
   {
     "id": 6,
     "name": "سعاد محمد العلي",
     "email": "sdlfjdljf@test.com",
-    "phone": "0577777777",
+    "phone": "777748555",
     "status": "غير مفعل",
-    "relationship": "أم"
+    "relationship": "أم",
+    "address": "صعناء - جولة عصر",
+    "nationalId": "88885525444",
+    "notes": ""
   }
 ]
