@@ -1,20 +1,20 @@
-import Link from "next/link";
-import { error } from "console";
+import { DataTableDemo } from "./grid";
+import { getTeacherAnalytics } from "../userManagement/teacher/main/api-providers";
 
 
-const AboutPage =  async () => {
-  // const response = await fetch("https://localhost:44363/api/Users/GetAllUsers");
-    const resonse = 10/0
-  
-    // 
+const AboutPage = async () => {
+  // const [teachers, specialties]: [Teacher[], Specialty[]] = await Promise.all([
+  //   getTeacher(),
+  //   getSpecialty(),
+  // ]);
 
-      throw new Error("Failed MUSAB");
-    
+  const teacherData = await getTeacherAnalytics();
   
 
   return (
-    <div className="container m-auto px-5 rounded-2xl">
-      {/* <div className="p-5 rounded-lg my-1 shadow-lg">{user.name}</div> */}
+    <div className="p-6">
+      <h1 className="text-3xl font-bold mb-6">جدول المعلمين - About</h1>
+      <DataTableDemo data={teacherData.teachers} specialties={teacherData.specialties} />
     </div>
   )
 }
