@@ -1,12 +1,8 @@
 "use client";
 
-import guardiansData from "../../../../../data/guardian.json";
-
-import { useSearchParams } from "next/navigation";
-
 import * as React from "react";
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import {
   Card,
   CardContent,
@@ -23,6 +19,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Guardian } from "@/types/guardian";
 
 type CreateGuardianPayload = {
   fullName: string;
@@ -34,10 +31,12 @@ type CreateGuardianPayload = {
   notes?: string;
 };
 
-export default function Page() {
-  // 1. استدعاء الدالة للحصول على الكائن
+export default function EditGuardianForm({
+  initialGuardian,
+}: {
+  initialGuardian: Guardian | null;
+}) {
   const searchParams = useSearchParams();
-  // 2. استخدام .get() على الكائن
   const id = searchParams.get("id");
   const router = useRouter();
   const [submitting, setSubmitting] = useState(false);
@@ -55,21 +54,18 @@ export default function Page() {
   });
 
   useEffect(() => {
-    if (id) {
-      const guardian = guardiansData.find((g) => g.id === Number(id));
-      if (guardian) {
-        setForm({
-          fullName: guardian.name,
-          phone: guardian.phone,
-          email: guardian.email,
-          relation: guardian.relationship,
-          nationalId: guardian.nationalId,
-          address: guardian.address,
-          notes: guardian.notes || "",
-        });
-      }
+    if (initialGuardian) {
+      setForm({
+        fullName: (initialGuardian as any).name || "",
+        phone: (initialGuardian as any).phone || "",
+        email: (initialGuardian as any).email || "",
+        relation: (initialGuardian as any).relationship || "",
+        nationalId: (initialGuardian as any).nationalId || "",
+        address: (initialGuardian as any).address || "",
+        notes: (initialGuardian as any).notes || "",
+      });
     }
-  }, [id]);
+  }, [initialGuardian]);
 
   const handleChange =
     (field: keyof CreateGuardianPayload) =>
@@ -104,7 +100,9 @@ export default function Page() {
         throw new Error(data?.message || "تعذر إضافة ولي الأمر");
       }
 
-      setSuccess(id ? "تم تحديث بيانات ولي الأمر" : "تمت إضافة ولي الأمر بنجاح");
+      setSuccess(
+        id ? "تم تحديث بيانات ولي الأمر" : "تمت إضافة ولي الأمر بنجاح"
+      );
       setForm({
         fullName: "",
         phone: "",
@@ -128,14 +126,13 @@ export default function Page() {
         <CardHeader>
           <CardTitle>{id ? "تعديل ولي أمر" : "إضافة ولي أمر"}</CardTitle>
           <CardDescription>
-          {id
+            {id
               ? "يمكنك تعديل بيانات ولي الأمر هنا"
               : "أدخل بيانات ولي الأمر ثم اضغط على حفظ"}
           </CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-6">
-            {/* الحقول في Grid متجاوبة */}
             <div className="grid gap-4 sm:grid-cols-2">
               <div className="space-y-2">
                 <Label htmlFor="fullName">
@@ -244,11 +241,7 @@ export default function Page() {
                 disabled={submitting}
                 className="w-full sm:w-auto px-6 py-2 text-white font-semibold bg-lime-800 rounded-lg hover:bg-lime-900 transition-colors"
               >
-                {submitting
-                  ? "جارِ الحفظ..."
-                  : id
-                  ? "تحديث"
-                  : "حفظ"}
+                {submitting ? "جارِ الحفظ..." : id ? "تحديث" : "حفظ"}
               </Button>
               <Button
                 type="button"

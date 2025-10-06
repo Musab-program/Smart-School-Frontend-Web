@@ -2,12 +2,16 @@
 
 import Link from "next/link";
 
-import { useRouter } from 'next/navigation';
+import { useRouter } from "next/navigation";
 
 // 1. استيراد ملف JSON
-import guardiansData from "../../../../../data/guardian.json"; // تأكد من المسار الصحيح لملف JSON
+// import guardiansData from "../../../../../data/guardian.json"; // تأكد من المسار الصحيح لملف JSON
 
-const GuardianTable = () => {
+// const guardiansData = () =>{
+
+// }
+
+const GuardianTable = ({ guardiansData }) => {
   const router = useRouter();
   const TABLE_HEAD = [
     "الاسم",
@@ -19,9 +23,9 @@ const GuardianTable = () => {
     "حذف",
   ];
 
-  const renderStatus = (status) => {
-    const isActivated = status === "مفعل";
-    const statusClasses = isActivated
+  const renderIsActive = (IsActive) => {
+    const isActivated = IsActive === "مفعل";
+    const IsActiveClasses = isActivated
       ? "text-green-900 bg-green-500/20"
       : "text-red-900 bg-red-500/20"; // مثال لإضافة حالة "غير مفعل" باللون الأحمر
 
@@ -29,9 +33,9 @@ const GuardianTable = () => {
       <div className="flex justify-center">
         <div class="w-max">
           <div
-            class={`px-2 py-1 font-sans text-xs font-bold uppercase rounded-md select-none whitespace-nowrap ${statusClasses}`}
+            class={`px-2 py-1 font-sans text-xs font-bold uppercase rounded-md select-none whitespace-nowrap ${IsActiveClasses}`}
           >
-            <span class="">{status}</span>
+            <span class="">{IsActive}</span>
           </div>
         </div>
       </div>
@@ -45,10 +49,11 @@ const GuardianTable = () => {
         const editUrl = `../guardian/edit?id=${gid}`;
         // 2. استخدام router.push للتوجيه
         router.push(editUrl);
-        // editbyid = 
-    } else {
+        // editbyid =
+      } else {
         console.log(`${action} clicked`);
-    }}
+      }
+    };
     // const handleClick = () => {
     //   if (action === "edit") {
     //     <Link href="../guardian/edit"></Link> // 👈 استدعاء دالة فتح الرابط
@@ -158,8 +163,8 @@ const GuardianTable = () => {
             </thead>
             <tbody>
               {/* 4. تكرار صفوف الجدول باستخدام دالة map على بيانات JSON */}
-              {guardiansData.map(
-                ({ id, name, email, phone, status, relationship }) => (
+              {(guardiansData?.guardians ?? guardiansData ?? []).map(
+                ({ id, name, email, phone, IsActive, relationship }) => (
                   <tr key={id}>
                     {/* عمود الاسم */}
                     <td class="p-4 border-b border-blue-gray-50 text-center">
@@ -181,7 +186,7 @@ const GuardianTable = () => {
                     </td>
                     {/* عمود حالة الحساب */}
                     <td class="p-4 border-b border-blue-gray-50">
-                      {renderStatus(status)}
+                      {renderIsActive(IsActive)}
                     </td>
                     {/* عمود نوع العلاقة */}
                     <td class="p-4 border-b border-blue-gray-50 text-center">
@@ -189,11 +194,11 @@ const GuardianTable = () => {
                     </td>
                     {/* عمود التعديل */}
                     <td class="p-4 border-b border-blue-gray-50 text-center">
-                      {renderActionButton(editIconPath, "Edit" , id)}
+                      {renderActionButton(editIconPath, "Edit", id)}
                     </td>
                     {/* عمود الحذف */}
                     <td class="p-4 border-b border-blue-gray-50 text-center">
-                      {renderActionButton(deleteIconPath, "Delete" , id)}
+                      {renderActionButton(deleteIconPath, "Delete", id)}
                     </td>
                   </tr>
                 )
