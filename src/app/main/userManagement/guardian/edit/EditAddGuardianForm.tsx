@@ -85,21 +85,6 @@ export default function Page({ guardiansData }: PageProps) {
       }
     }
   }, [id, guardiansData]);
-  //   useEffect(() => {
-  //     if (id)
-  //     const guardian = guardiansData.find((g) => g.id === Number(id));
-  //     if (guardiansData) {
-  //       setForm({
-  //         fullName: guardiansData.name,
-  //         phone: guardiansData.phone,
-  //         email: guardiansData.email ?? "",
-  //         relation: guardiansData.relationship,
-  //         nationalId: guardiansData.nationalId ?? "",
-  //         address: guardiansData.address ?? "",
-  //         notes: guardiansData.notes ?? "",
-  //       });
-  //     }
-  //   }, [guardiansData]);
 
   const handleChange =
     (field: keyof CreateGuardianPayload) =>
@@ -131,7 +116,7 @@ export default function Page({ guardiansData }: PageProps) {
 
       if (!res.ok) {
         const data = await res.json().catch(() => ({}));
-        throw new Error(data?.message || "تعذر إضافة ولي الأمر");
+        throw new Error(id ? "تعذر تحديث بيانات ولي ولي الأمر" :(data?.message || "تعذر إضافة بيانات ولي الأمر"));
       }
 
       setSuccess(
