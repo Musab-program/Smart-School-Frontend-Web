@@ -21,7 +21,7 @@ export default async function TeacherPage() {
 
         <div>
           <div className="flex justify-between">
-          <Link href="../add">
+          <Link href="./add">
           <Button size="sm" className='bg-lime-700 hover:bg-lime-900'>
           + إضافة معلم جديد
         </Button>

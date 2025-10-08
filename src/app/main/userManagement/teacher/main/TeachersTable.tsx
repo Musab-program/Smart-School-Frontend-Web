@@ -261,11 +261,12 @@ export function TeacherTable({ data, specialties }: TeacherTableProps) {
       header: "تعديل",
       id: "edit_action",
       enableHiding: false,
-      cell: ({}) => {
+      cell: ({row}) => {
+        const teacherId = row.original.Id;
         return (
-          <Link href="./edit">
+          <Link href={` ../teacher/add?id=${teacherId} `}>
             <Button size="icon" variant="ghost" className='text-blue-500 hover:bg-blue-50' >
-              <Pencil size={18} />
+              <Pencil size={18} /> 
             </Button>
           </Link>
         );
@@ -275,9 +276,12 @@ export function TeacherTable({ data, specialties }: TeacherTableProps) {
       header: "حذف",
       id: "delete_action",
       enableHiding: false,
-      cell: ({}) => {
+      cell: ({row}) => {
+        const teacherId = row.original.Id;
         return (
-          <Button size="icon" variant="ghost" className='text-red-500 hover:bg-red-50' >
+          <Button size="icon" variant="ghost" className='text-red-500 hover:bg-red-50'
+          // onClick={() => onDelete(teacherId)}
+          >
             <Trash2 size={18} />
           </Button>
         );

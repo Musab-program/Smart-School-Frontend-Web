@@ -41,7 +41,7 @@ export async function getTeacherAnalytics() {
 export async function getTeacherById(teacherId: number): Promise<Teacher | null> {
   try {
     const teachers = await getTeacher();
-    return teachers.find(teacher => teacher.userId === teacherId) || null;
+    return teachers.find(teacher => teacher.Id === teacherId) || null;
   } catch (error) {
     console.error("خطأ في جلب بيانات المعلم:", error);
     return null;
@@ -68,3 +68,4 @@ export async function getQualificationBySpecialtyId  (id: number) {
   const AllSpecialties =  await getTeacherAnalytics();
   return AllSpecialties.specialties.find(s => s.SpecialtyId === id)?.Qualification || "غير متوفر";
 };
+
