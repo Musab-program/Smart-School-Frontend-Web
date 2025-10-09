@@ -1,22 +1,26 @@
 [
-    {
-        "id": 1,
-        "relationship": "أب"
-    },
-    {
-        "id": 2,
-        "relationship": "أم"
-    },
-    {
-        "id": 3,
-        "relationship": "أخ"
-    },
-    {
-        "id": 4,
-        "relationship": "أخت"
-    },
-    {
-        "id": 5,
-        "relationship": "ولي أمر آخر"
-    }
+  {
+    "id": 1,
+    "relationship": "أب"
+  },
+  {
+    "id": 2,
+    "relationship": "أم"
+  },
+  {
+    "id": 3,
+    "relationship": "أخ"
+  },
+  {
+    "id": 4,
+    "relationship": "أخت"
+  },
+  {
+    "id": 5,
+    "relationship": "ولي أمر آخر"
+  },
+  {
+    "id": 6,
+    "relationship": "عمك(ميسي)"
+  }
 ]

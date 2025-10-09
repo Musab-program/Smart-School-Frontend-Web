@@ -6,6 +6,7 @@ import { isUtf8 } from "buffer";
 import * as fs from "fs/promises";
 import path from "path";
 import { json } from "stream/consumers";
+import { Relation } from "@/types/relation";
 
 function getDatePath(fileName: string) {
   return path.join(process.cwd(), "src/data", fileName);
@@ -51,6 +52,10 @@ export async function getRoles(): Promise<Role[]> {
 
 export async function getGuardian(): Promise<Guardian[]> {
   return fetchData<Guardian[]>("guardian.json");
+}
+
+export async function getRelation(): Promise<Relation[]> {
+  return fetchData<Relation[]>("relation.json");
 }
 
 // export const api = {

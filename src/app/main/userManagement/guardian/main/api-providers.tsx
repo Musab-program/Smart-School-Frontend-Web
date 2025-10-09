@@ -1,5 +1,6 @@
 import { getGuardian } from "@/lib/api";
 import { Guardian } from "@/types/guardian";
+import { Relation } from "@/types/relation";
 
 export async function getGuardianById(
   guardianId: number
@@ -34,6 +35,18 @@ export async function getGuardianAnalytics() {
       // لا يوجد متوسط أولياء أمور لكل تخصص هنا، لذا نعيد قيمة افتراضية
       averageGuardiansPerSpecialty: "0",
     };
+  } catch (error) {
+    console.error("خطأ في جلب بيانات المعلمين:", error);
+    throw new Error("فشل في جلب بيانات المعلمين");
+  }
+}
+
+import { getRelation as fetchRelations } from "@/lib/api";
+
+export async function getRelation(): Promise<Relation[]> {
+  try {
+    const relations: Relation[] = await fetchRelations();
+    return relations;
   } catch (error) {
     console.error("خطأ في جلب بيانات المعلمين:", error);
     throw new Error("فشل في جلب بيانات المعلمين");
