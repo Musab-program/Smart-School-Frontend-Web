@@ -31,6 +31,7 @@ import {
   getGuardianById,
   type GuardianUpsertInput,
 } from "@/lib/Dia-api";
+import { FaLess } from "react-icons/fa";
 // import { getGuardianById } from "../main/api-providers";
 
 // type CreateGuardianPayload = {
@@ -67,7 +68,7 @@ export default function Page() {
     email: "",
     relation: "",
     relationName: "",
-    isActive: "",
+    isActive: false,
     address: "",
     secondryPhone: "",
     password: "",
@@ -93,7 +94,7 @@ export default function Page() {
         email: "",
         relation: "",
         relationName: "",
-        isActive: "",
+        isActive: false,
         address: "",
         secondryPhone: "",
         password: "",
@@ -123,8 +124,8 @@ export default function Page() {
           rawActive === "1" ||
           rawActive === "true" ||
           rawActive === "مفعل"
-            ? "true"
-            : "false";
+            ? true
+            : false;
 
         // ✅ ملء النموذج بالبيانات الممررة
         setForm({
@@ -138,7 +139,13 @@ export default function Page() {
           secondryPhone:
             g.secondryPhone ?? g.secondaryPhone ?? g.altPhone ?? "",
           password: "", // لا يتم تعبئة كلمة المرور أبداً
-          gender: g.gender ?? g.Gender ?? "",
+          gender:
+            g.gender?.toString().toLowerCase() === "male" || g.gender === "ذكر"
+              ? "male"
+              : g.gender?.toString().toLowerCase() === "female" ||
+                g.gender === "أنثى"
+              ? "female"
+              : "",
           userId: g.userId ?? g.UserID ?? 0,
           dateOfBirth:
             g.dateOfBirth ?? g.DateOfBirth ?? "2000-01-01T00:00:00.000Z",
@@ -172,8 +179,8 @@ export default function Page() {
           rawActive === 1 ||
           rawActive === "true" ||
           rawActive === "مفعل"
-            ? "true"
-            : "false";
+            ? true
+            : false;
 
         setForm({
           fullName: g.userName ?? g.fullName ?? "",
@@ -186,7 +193,13 @@ export default function Page() {
           secondryPhone:
             g.secondryPhone ?? g.secondaryPhone ?? g.altPhone ?? "",
           password: "", // عدم تعبئة كلمة المرور أبداً
-          gender: g.gender ?? g.Gender ?? "",
+          gender:
+            g.gender?.toString().toLowerCase() === "male" || g.gender === "ذكر"
+              ? "male"
+              : g.gender?.toString().toLowerCase() === "female" ||
+                g.gender === "أنثى"
+              ? "female"
+              : "",
           // ✅ الحقول الحاسمة للتحديث
           userId: g.userId ?? g.UserID ?? 0,
           dateOfBirth:
@@ -202,65 +215,6 @@ export default function Page() {
       fetchGuardianData(id);
     }
   }, [id, dataParam]);
-  // const storedGuardian = localStorage.getItem("editingGuardian");
-  //     if (storedGuardian) {
-  //       const g = JSON.parse(storedGuardian);
-  //       const rawActive =
-  //         g.isActive ??
-  //         g.IsActive ??
-  //         g.active ??
-  //         g.Active ??
-  //         g.status ??
-  //         g.Status;
-  //       const normalizedActive = (() => {
-  //         if (
-  //           rawActive === true ||
-  //           rawActive === 1 ||
-  //           rawActive === "1" ||
-  //           rawActive === "true" ||
-  //           rawActive === "مفعل"
-  //         )
-  //           return "true";
-  //         if (
-  //           rawActive === false ||
-  //           rawActive === 0 ||
-  //           rawActive === "0" ||
-  //           rawActive === "false" ||
-  //           rawActive === "غير مفعل"
-  //         )
-  //           return "false";
-  //         return "";
-  //       })();
-  //       setForm({
-  //         fullName: g.userName ?? "",
-  //         phone: g.phone ?? "",
-  //         email: g.email ?? "",
-  //         relation: g.relationTypeId?.toString() ?? "",
-  //         isActive: normalizedActive,
-  //         address: g.address ?? "",
-  //         notes: g.notes ?? "",
-  //         secondryPhone:
-  //           g.secondryPhone ?? g.secondaryPhone ?? g.altPhone ?? "",
-  //         password: "",
-  //         gender: g.gender ?? g.Gender ?? "",
-  //       });
-  //     }
-  //   } else {
-  //     localStorage.removeItem("editingGuardian");
-  //     setForm({
-  //       fullName: "",
-  //       phone: "",
-  //       email: "",
-  //       relation: "",
-  //       isActive: "",
-  //       address: "",
-  //       notes: "",
-  //       secondryPhone: "",
-  //       password: "",
-  //       gender: "",
-  //     });
-  //   }
-  // }, [id]);
 
   // Ensure relation is selected by name when editing and only name is available
   useEffect(() => {
@@ -340,6 +294,10 @@ export default function Page() {
       dateOfBirth: form.dateOfBirth,
     };
 
+    payload.isActive = Boolean(form.isActive);
+
+    console.log("🚀 Final payload to API:", payload);
+
     try {
       let successMessage = "";
 
@@ -368,7 +326,7 @@ export default function Page() {
         email: "",
         relation: "",
         relationName: "", // يجب مسح اسم العلاقة أيضاً
-        isActive: "",
+        isActive: false,
         address: "",
         secondryPhone: "",
         password: "",
@@ -383,66 +341,6 @@ export default function Page() {
       setSubmitting(false);
     }
   }
-  // async function handleSubmit(e: React.FormEvent) {
-  //   e.preventDefault();
-  //   setError(null);
-  //   setSuccess(null);
-
-  //   // 2. ✅ تجهيز الحمولة (Payload) الكاملة والدقيقة للإرسال
-  //   // البحث عن الاسم الحقيقي لصلة القرابة من قائمة البيانات
-  //   const selectedRelation = relationData.find(r =>
-  //     (r.id?.toString() ?? String(r.id)) === form.relation
-  // );
-  // const relationName = selectedRelation?.name ?? selectedRelation?.relationship ?? selectedRelation?.relationName ?? "";
-
-  // const payload: CreateGuardianPayload = {
-  //   ...form,
-  //   // تمرير الاسم الحقيقي الذي تطلبه الـ API
-  //   relationName: relationName,
-  //   // تمرير حقول التحديث الحساسة
-  //   userId: form.userId,
-  //   dateOfBirth: form.dateOfBirth,
-  // };
-
-  //   if (!form.fullName.trim()) {
-  //     setError("الاسم الكامل مطلوب");
-  //     return;
-  //   }
-  //   if (!/^\+?\d{8,15}$/.test(form.phone.trim())) {
-  //     setError("رقم الجوال غير صالح");
-  //     return;
-  //   }
-
-  //   setSubmitting(true);
-  //   try {
-  //     if (id) {
-  //       await updateGuardian(id, form);
-  //     } else {
-  //       await addGuardian(form);
-  //     }
-  //     setSuccess(
-  //       id ? "تم تحديث بيانات ولي الأمر" : "تمت إضافة ولي الأمر بنجاح"
-  //     );
-  //     setForm({
-  //       fullName: "",
-  //       phone: "",
-  //       email: "",
-  //       relation: "",
-  //       isActive: "",
-  //       address: "",
-  //       secondryPhone: "",
-  //       password: "",
-  //       gender: "",
-  //     });
-  //   } catch (err: unknown) {
-  //     const message = err instanceof Error ? err.message : "حدث خطأ غير متوقع";
-  //     setError(message);
-  //   } finally {
-  //     setSubmitting(false);
-  //   }
-
-  //   setSuccess(id ? "تم تحديث بيانات ولي الأمر" : "تمت إضافة ولي الأمر بنجاح");
-  // }
 
   return (
     <div className="container mx-auto max-w-4xl px-4 py-6" dir="rtl">
@@ -511,18 +409,11 @@ export default function Page() {
               <div className="space-y-2">
                 <Label>نشاط الحساب</Label>
                 <Select
-                  value={
-                    form.isActive === true
-                      ? "true"
-                      : form.isActive === false
-                      ? "false"
-                      : ""
-                  }
+                  value={form.isActive ? "true" : "false"}
                   onValueChange={(v) =>
                     setForm((p) => ({
                       ...p,
-                      isActive:
-                        v === "true" ? true : v === "false" ? false : undefined,
+                      isActive: v === "true",
                     }))
                   }
                 >
@@ -614,23 +505,12 @@ export default function Page() {
                     <SelectValue placeholder="اختر جنس ولي الأمر" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="female">ذكر</SelectItem>
-                    <SelectItem value="male">أنثى</SelectItem>
+                    <SelectItem value="male">ذكر</SelectItem>
+                    <SelectItem value="female">أنثى</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
             </div>
-
-            {/* <div className="space-y-2">
-              <Label htmlFor="notes">ملاحظات</Label>
-              <textarea
-                id="notes"
-                placeholder="أي ملاحظات إضافية"
-                value={form.notes}
-                onChange={handleChange("notes")}
-                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-lime-700"
-              />
-            </div> */}
 
             {error ? (
               <div className="rounded-md border border-destructive/30 bg-destructive/5 p-3 text-destructive text-sm">

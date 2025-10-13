@@ -80,29 +80,12 @@ export async function addGuardian(data: GuardianUpsertInput) {
       roleID: 1, // افتراضياً، ولي الأمر هو Role ID 1
 
       // 💡 حالة التفعيل (تحويل الـ string إلى boolean)
-      isActive: data.isActive === "true",
+      // isActive: data.isActive === "true",
+      isActive: Boolean(data.isActive),
+
 
       // 💡 تاريخ الميلاد (تم وضع التاريخ الحالي كقيمة افتراضية، يجب تغييرها إذا كان الحقل في النموذج موجوداً)
       dateOfBirth: data.dateOfBirth || "2000-01-01T00:00:00.000Z",
-      // body: JSON.stringify({
-      //   userName: data.fullName,
-      //   relationTypeId: Number(data.relation),
-      //   phone: data.phone,
-      //   email: data.email,
-      //   address: data.address,
-      //   notes: data.notes,
-      //   isActive: data.isActive === "true",
-      //   // relationTypeId: Number(data.relation),
-      //   // relationType: Number(data.relation),
-      //   // relationType: {
-      //   //   id: Number(data.relation),},
-      //   relationType: {
-      //     id: Number(data.relation),
-      //     name: data.relationName,
-      //   },
-      //   gender: data.gender, // مؤقتًا
-      //   password: data.password,
-      //   secondryPhone: data.secondryPhone,
     }),
   });
 
@@ -147,7 +130,8 @@ export async function updateGuardian(
         userId: 0,
         roleID: 1,
         // 💡 حالة التفعيل (تحويل الـ string إلى boolean)
-        isActive: data.isActive === "true",
+        // isActive: data.isActive === "true",
+      isActive: Boolean(data.isActive),
 
         // 💡 تاريخ الميلاد (قيمة افتراضية، يتم استبدالها بقيمة جُمعت من الجلب في وضع التعديل)
         dateOfBirth: "2000-01-01T00:00:00.000Z",
@@ -162,6 +146,37 @@ export async function updateGuardian(
 
   return await res.json();
 }
+
+export async function deleteGuardian(id: number | string) {
+  const res = await fetch(
+    `https://localhost:44363/api/Guardian/DeleteGuardian?id=${id}`,
+    {
+      method: "DELETE",
+      headers: { "Content-Type": "application/json" },
+    }
+  );
+
+  if (!res.ok) {
+    const error = await res.text();
+    throw new Error(`فشل الحذف: ${error}`);
+  }
+
+  return await res.json().catch(() => ({}));
+}
+
+// export async function deleteGuardian(id: number | string) {
+//   const res = await fetch(`https://localhost:44363/api/Guardian/DeleteGuardian?id=${id}`, {
+//     method: "DELETE",
+//     headers: { "Content-Type": "application/json" },
+//   });
+
+//   if (!res.ok) {
+//     const err = await res.text();
+//     throw new Error(`فشل الحذف: ${err}`);
+//   }
+
+//   return await res.json().catch(() => ({}));
+// }
 
 // export async function addGuardian(payload: unknown) {
 //   const res = await fetch("https://localhost:44363/api/Guardian/AddGuardian", {

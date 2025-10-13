@@ -6,7 +6,7 @@ import Link from "next/link";
 
 import { useRouter } from "next/navigation";
 
-import { getGuardians } from "@/lib/Dia-api";
+import { getGuardians, deleteGuardian } from "@/lib/Dia-api";
 
 // 1. استيراد ملف JSON
 // import guardiansData from "../../../../../data/guardian.json"; // تأكد من المسار الصحيح لملف JSON
@@ -17,11 +17,22 @@ import { getGuardians } from "@/lib/Dia-api";
 
 const GuardianTable = () => {
   const [guardians, setGuardians] = useState([]);
+  const [searchTerm, setSearchTerm] = useState(""); 
   useEffect(() => {
     // console.log("👀 بيانات API:", guardians);
     getGuardians().then(setGuardians).catch(console.error);
   }, []);
   const router = useRouter();
+  // 🚀 2. منطق تصفية البيانات
+  const filteredGuardians = (guardians ?? []).filter((guardian) => {
+    const term = searchTerm.toLowerCase();
+    const nameMatch = guardian.userName?.toLowerCase().includes(term);
+    const emailMatch = guardian.email?.toLowerCase().includes(term);
+    const phoneMatch = guardian.phone?.includes(term); 
+
+    // البحث في الاسم أو البريد الإلكتروني أو رقم الهاتف
+    return nameMatch || emailMatch || phoneMatch;
+  });
   const TABLE_HEAD = [
     "الاسم",
     "البريد الإلكتروني",
@@ -64,37 +75,25 @@ const GuardianTable = () => {
   };
 
   const renderActionButton = (iconPath, action, guardian) => {
-    const handleClick = () => {
+    const handleClick = async () => {
       if (action === "Edit") {
         // localStorage.setItem("editingGuardian", JSON.stringify(guardian));
         const encodedData = encodeURIComponent(JSON.stringify(guardian));
         router.push(
           `/main/userManagement/guardian/edit?id=${guardian.id}&data=${encodedData}`
         );
-        // router.push(`/main/userManagement/guardian/edit?id=${guardian.id}`);
-        // 1. تحديد مسار التعديل مع تمرير مُعرِّف ولي الأمر
-        // const editUrl = `../guardian/edit?id=${id}`;
-        // router.push(`/guardians/add?id=${guardian.id}`, {
-        //   state: { guardian },});
-        // 2. استخدام router.push للتوجيه
-        // router.push(editUrl);
-        // editbyid =
-      } else {
-        console.log(`${action} clicked`);
+      } else if (action === "Delete") {
+        try {
+          console.log("🧩 Guardian Object:", guardian);
+          await deleteGuardian(guardian); // ✅ لأنه رقم
+          alert("✅ تم حذف ولي الأمر بنجاح");
+          router.refresh();
+        } catch (err) {
+          console.error("❌ فشل الحذف:", err);
+          alert("حدث خطأ أثناء الحذف.");
+        }
       }
     };
-    // const handleClick = () => {
-    //   if (action === "edit") {
-    //     <Link href="../guardian/edit"></Link> // 👈 استدعاء دالة فتح الرابط
-    //   } else if (action === "delete") {
-    //     console.log("Delete");
-    //     // هنا يبقى منطق الحذف
-    //   }
-    // يمكنك إضافة منطق للمناداة على دالة عند الضغط على الزر (مثال: onDelete, onEdit)
-    // const handleClick = () => {
-    //   console.log(`${action} clicked`);
-    //   // هنا يمكنك استدعاء دوال التعديل أو الحذف
-    // };
 
     return (
       <button
@@ -134,7 +133,37 @@ const GuardianTable = () => {
             </div>
             {/* ... الكود الخاص بالبحث وزر إضافة ولي أمر جديد (يبقى كما هو) ... */}
             <div className="flex w-full gap-2 shrink-0 md:w-max ">
-              <div className="w-full md:w-72">
+              <div className="w-full md:w-72 ">
+                <div class="relative h-10 w-full max-w-sm min-w-[200px]">
+                  <div class="relative">
+                    <input
+                      // 🚀 ربط قيمة الإدخال بحالة searchTerm
+                      value={searchTerm}
+                      onChange={(e) => setSearchTerm(e.target.value)}
+                      class="w-full bg-transparent placeholder:text-slate-400 text-lime-900 text-sm border border-slate-200 rounded-md pl-3 pr-28 py-2 transition duration-300 ease focus:outline-none focus:border-lime-900 hover:border-slate-300 shadow-sm focus:shadow font-bold"
+                      placeholder="البحث عن ولي أمر"
+                    />
+                    <button
+                      class="absolute top-1 right-1 flex items-center rounded bg-lime-800 py-1 px-2.5 border border-transparent text-center text-sm text-white transition-all shadow-sm hover:shadow focus:bg-lime-900 focus:shadow-none active:bg-lime-700 active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
+                      type="button"
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        viewBox="0 0 24 24"
+                        fill="currentColor"
+                        class="w-4 h-5"
+                      >
+                        <path
+                          fill-rule="evenodd"
+                          d="M10.5 3.75a6.75 6.75 0 1 0 0 13.5 6.75 6.75 0 0 0 0-13.5ZM2.25 10.5a8.25 8.25 0 1 1 14.59 5.28l4.69 4.69a.75.75 0 1 1-1.06 1.06l-4.69-4.69A8.25 8.25 0 0 1 2.25 10.5Z"
+                          clip-rule="evenodd"
+                        />
+                      </svg>
+                    </button>
+                  </div>
+                </div>
+              </div>
+              {/* <div className="w-full md:w-72">
                 <div className="relative h-10 w-full min-w-[200px] hover:shadow-lg hover:shadow-gray-900/20">
                   <div className="absolute grid w-5 h-5 top-2/4 left-3 -translate-y-2/4 place-items-center text-blue-gray-500">
                     <svg
@@ -161,7 +190,7 @@ const GuardianTable = () => {
                     بحث
                   </label>
                 </div>
-              </div>
+              </div> */}
               <Link href="../guardian/edit">
                 <button
                   className="flex select-none items-center gap-3 rounded-lg bg-lime-900 py-3 px-5 text-center align-middle font-sans text-xs font-bold uppercase text-white shadow-md shadow-gray-900/10 transition-all hover:shadow-lg hover:shadow-gray-900/20 focus:opacity-[0.85] focus:shadow-none active:opacity-[0.85] active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
@@ -192,7 +221,8 @@ const GuardianTable = () => {
             </thead>
             <tbody>
               {/* 4. تكرار صفوف الجدول باستخدام دالة map على بيانات JSON */}
-              {(guardians ?? []).map((guardian) => {
+              {/* 🚀 4. استخدام قائمة أولياء الأمور المُصفاة (filteredGuardians) */}
+              {(filteredGuardians ?? []).map((guardian) => { // <-- تم تغييرها إلى filteredGuardians
                 const { id, userName, email, phone, isActive, relationType } =
                   guardian;
                 return (
