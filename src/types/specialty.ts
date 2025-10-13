@@ -1,5 +1,5 @@
 export interface Specialty {
-    SpecialtyId: number;
-    SpecialtyName: string;
-    Qualification: string;
+    id: number;
+    name: string;
+    qualification: string;
   }
