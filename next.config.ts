@@ -1,7 +1,12 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
+  // Allow self-signed localhost API during development
+  experimental: {
+    allowedDevOrigins: [
+      "https://localhost:44363",
+    ],
+  },
 };
 
 export default nextConfig;

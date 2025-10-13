@@ -13,7 +13,7 @@ import {
   useReactTable,
   VisibilityState,
 } from "@tanstack/react-table"
-import { ArrowUpDown, ChevronDown, Pencil, Trash2 } from "lucide-react"
+import { ArrowUpDown, ChevronDown, Pencil, RefreshCcw, Trash2 } from "lucide-react"
 import Link from "next/link"
 
 import { Button } from "@/components/ui/button"
@@ -33,9 +33,20 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog"
 import { Teacher } from "@/types/teacher"
 import { Specialty } from "@/types/specialty"
-
+import { deleteTeacher } from '@/lib/api';
 
 
 // columns are now created inside the component to use the provided specialties map
@@ -43,13 +54,21 @@ import { Specialty } from "@/types/specialty"
 interface TeacherTableProps {
   data: Teacher[]
   specialties: Specialty[]
+  onTeacherDeleted?: () => void // دالة لإعادة تحديث البيانات بعد الحذف
 }
 
-export function TeacherTable({ data, specialties }: TeacherTableProps) {
+export function TeacherTable({ data, specialties, onTeacherDeleted }: TeacherTableProps) {
+  // إدارة حالة الإشعارات والحذف
+  const [notification, setNotification] = React.useState<{
+    type: "success" | "error";
+    message: string;
+  } | null>(null);
+  const [isDeleting, setIsDeleting] = React.useState<number | null>(null);
+
   const specialtyIdToName = React.useMemo(() => {
     const map = new Map<number, string>();
     specialties.forEach((s) => {
-      map.set(s.SpecialtyId, s.SpecialtyName);
+      map.set(s.id, s.name);
     });
     return map;
   }, [specialties]);
@@ -57,21 +76,60 @@ export function TeacherTable({ data, specialties }: TeacherTableProps) {
   const QualificationIdToName = React.useMemo(() => {
     const map = new Map<number, string>();
     specialties.forEach((s) => {
-      map.set(s.SpecialtyId, s.Qualification);
+      map.set(s.id, s.qualification);
     });
     return map;
   }, [specialties]);
 
 
+  // دالة حذف المعلم
+  const handleDeleteTeacher = async (teacherId: number, teacherName: string) => {
+    setIsDeleting(teacherId);
+    setNotification(null);
+
+    try {
+      await deleteTeacher(teacherId);
+      setNotification({
+        type: "success",
+        message: `تم حذف المعلم ${teacherName} بنجاح! ✅`
+      });
+      
+      // إعادة تحديث البيانات
+      if (onTeacherDeleted) {
+        onTeacherDeleted();
+      }
+      
+      // إخفاء الإشعار بعد 3 ثواني
+      setTimeout(() => {
+        setNotification(null);
+        
+      }, 3000);
+      
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'حدث خطأ غير متوقع';
+      setNotification({
+        type: "error",
+        message: `فشل في حذف المعلم: ${errorMessage}`
+      });
+      
+      // إخفاء الإشعار بعد 5 ثواني
+      setTimeout(() => {
+        setNotification(null);
+      }, 5000);
+    } finally {
+      setIsDeleting(null);
+    }
+  };
+
   const columnIdToArabicLabel = React.useMemo(() => ({
-    UserName: "اسم المعلم",
-    IsActive: "الحالة",
-    Address: "العنوان",
-    Email: "البريد الإلكتروني",
-    Phone: "الهاتف",
-    SpecialtyId: "التخصص",
-    Qualification: "المؤهل",
-    Salary: "الراتب",
+    userName: "اسم المعلم",
+    isActive: "الحالة",
+    address: "العنوان",
+    email: "البريد الإلكتروني",
+    phone: "الهاتف",
+    specialtyId: "التخصص",
+    qualification: "المؤهل",
+    salary: "الراتب",
     select: "تحديد",
     edit_action: "تعديل",
     delete_action: "حذف",
@@ -102,7 +160,7 @@ export function TeacherTable({ data, specialties }: TeacherTableProps) {
       enableHiding: false,
     },
     {
-      accessorKey: "UserName",
+      accessorKey: "userName",
       header: ({ column }) => {
         return (
           <Button
@@ -114,10 +172,10 @@ export function TeacherTable({ data, specialties }: TeacherTableProps) {
           </Button>
         )
       },
-      cell: ({ row }) => <div className="font-medium">{row.getValue("UserName")}</div>,
+      cell: ({ row }) => <div className="font-medium">{row.getValue("userName")}</div>,
     },
     {
-      accessorKey: "IsActive",
+      accessorKey: "isActive",
       header: ({ column }) => {
         return (
           <Button
@@ -130,7 +188,7 @@ export function TeacherTable({ data, specialties }: TeacherTableProps) {
         )
       },
       cell: ({ row }) => {
-        const cellValue = row.getValue("IsActive") as boolean
+        const cellValue = row.getValue("isActive") as boolean
         return (
           <div className="flex justify-center">
             <span className={`py-1 px-3 rounded-full text-xs font-medium text-center ${cellValue ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
@@ -141,7 +199,7 @@ export function TeacherTable({ data, specialties }: TeacherTableProps) {
       },
     },
     {
-      accessorKey: "Address",
+      accessorKey: "address",
       header: ({ column }) => {
         return (
           <Button
@@ -153,10 +211,10 @@ export function TeacherTable({ data, specialties }: TeacherTableProps) {
           </Button>
         )
       },
-      cell: ({ row }) => <div className="font-medium">{row.getValue("Address")}</div>,
+      cell: ({ row }) => <div className="font-medium">{row.getValue("address")}</div>,
     },
     {
-      accessorKey: "Email",
+      accessorKey: "email",
       header: ({ column }) => {
         return (
           <Button
@@ -168,10 +226,10 @@ export function TeacherTable({ data, specialties }: TeacherTableProps) {
           </Button>
         )
       },
-      cell: ({ row }) => <div className="lowercase">{row.getValue("Email")}</div>,
+      cell: ({ row }) => <div className="lowercase">{row.getValue("email")}</div>,
     },
     {
-      accessorKey: "Phone",
+      accessorKey: "phone",
       header: ({ column }) => {
         return (
           <Button
@@ -183,10 +241,10 @@ export function TeacherTable({ data, specialties }: TeacherTableProps) {
           </Button>
         )
       },
-      cell: ({ row }) => <div className="lowercase">{row.getValue("Phone")}</div>,
+      cell: ({ row }) => <div className="lowercase">{row.getValue("phone")}</div>,
     },
     {
-      accessorKey: "SpecialtyId",
+      accessorKey: "specialtyId",
       header: ({ column }) => {
         return (
           <Button
@@ -199,7 +257,7 @@ export function TeacherTable({ data, specialties }: TeacherTableProps) {
         )
       },
       cell: ({ row }) => {
-        const id = row.getValue("SpecialtyId") as number
+        const id = row.getValue("specialtyId") as number
         const name = specialtyIdToName.get(id) || "غير محدد"
         return (
           <div className="flex justify-center">
@@ -211,7 +269,7 @@ export function TeacherTable({ data, specialties }: TeacherTableProps) {
       },
     },
     {
-      accessorKey: "Qualification",
+      accessorKey: "qualification",
       header: ({ column }) => {
         return (
           <Button
@@ -221,10 +279,10 @@ export function TeacherTable({ data, specialties }: TeacherTableProps) {
             المؤهل
             <ArrowUpDown />
           </Button>
-        )
+        ) 
       },
        cell: ({ row }) => {
-        const id = row.getValue("SpecialtyId") as number
+        const id = row.getValue("specialtyId") as number
         const name = QualificationIdToName.get(id) || "غير محدد"
         return (
           <div className="flex justify-center">
@@ -236,7 +294,7 @@ export function TeacherTable({ data, specialties }: TeacherTableProps) {
       },
     },
     {
-      accessorKey: "Salary",
+      accessorKey: "salary",
       header: ({ column }) => {
         return (
           <Button
@@ -249,7 +307,7 @@ export function TeacherTable({ data, specialties }: TeacherTableProps) {
         )
       },
       cell: ({ row }) => {
-        const amount = parseFloat(row.getValue("Salary") as string)
+        const amount = parseFloat(row.getValue("salary") as string)
         const formatted = new Intl.NumberFormat("ar-YE", {
           style: "decimal",
           minimumFractionDigits: 2,
@@ -262,7 +320,7 @@ export function TeacherTable({ data, specialties }: TeacherTableProps) {
       id: "edit_action",
       enableHiding: false,
       cell: ({row}) => {
-        const teacherId = row.original.Id;
+        const teacherId = row.original.id;
         return (
           <Link href={` ../teacher/add?id=${teacherId} `}>
             <Button size="icon" variant="ghost" className='text-blue-500 hover:bg-blue-50' >
@@ -277,13 +335,45 @@ export function TeacherTable({ data, specialties }: TeacherTableProps) {
       id: "delete_action",
       enableHiding: false,
       cell: ({row}) => {
-        const teacherId = row.original.Id;
+        const teacherId = row.original.id;
+        
+        const teacherName = row.original.userName;
+        const isCurrentlyDeleting = isDeleting === teacherId;
+        
         return (
-          <Button size="icon" variant="ghost" className='text-red-500 hover:bg-red-50'
-          // onClick={() => onDelete(teacherId)}
-          >
-            <Trash2 size={18} />
-          </Button>
+          
+          <AlertDialog>
+            <AlertDialogTrigger asChild>
+              <Button 
+                size="icon" 
+                variant="ghost" 
+                className='text-red-500 hover:bg-red-50'
+                disabled={isCurrentlyDeleting}
+              >
+                <Trash2 size={18} />
+              </Button>
+            </AlertDialogTrigger>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>تأكيد الحذف</AlertDialogTitle>
+                <AlertDialogDescription>
+                  هل أنت متأكد من حذف المعلم <strong>{teacherName}</strong>؟
+                  <br />
+                  <span className="text-red-600 font-semibold">هذا الإجراء لا يمكن التراجع عنه.</span>
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel>إلغاء</AlertDialogCancel>
+                <AlertDialogAction
+                  onClick={() => teacherId && handleDeleteTeacher(teacherId, teacherName)}
+                  className="bg-red-600 hover:bg-red-700"
+                  disabled={isCurrentlyDeleting}
+                >
+                  {isCurrentlyDeleting ? "جاري الحذف..." : "حذف"}
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
         );
       }
     }
@@ -317,6 +407,17 @@ export function TeacherTable({ data, specialties }: TeacherTableProps) {
 
   return (
     <div className="w-full text-right ">
+      {/* إشعارات النجاح والخطأ */}
+      {notification && (
+        <div
+          className={`fixed top-4 left-1/2 -translate-x-1/2 px-6 py-3 rounded-lg drop-shadow-lg z-50 text-white ${
+            notification.type === "success" ? "bg-green-500" : "bg-red-500"
+          }`}
+        >
+          <p>{notification.message}</p>
+        </div>
+      )}
+      
       <div className="flex items-center py-4 px-1">
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
@@ -347,9 +448,9 @@ export function TeacherTable({ data, specialties }: TeacherTableProps) {
         
         <Input
           placeholder="البحث في الاسماء"
-          value={(table.getColumn("UserName")?.getFilterValue() as string) ?? ""}
+          value={(table.getColumn("userName")?.getFilterValue() as string) ?? ""}
           onChange={(event) =>
-            table.getColumn("UserName")?.setFilterValue(event.target.value)
+            table.getColumn("userName")?.setFilterValue(event.target.value)
           }
           className="max-w-sm text-right"
         />

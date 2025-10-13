@@ -8,15 +8,15 @@ export async function getTeacherAnalytics() {
     const specialties: Specialty[] = await getSpecialty();
 
     const totalTeachers = teachers.length;
-    const activeTeachers = teachers.filter(t => t.IsActive).length;
-    const inactiveTeachers = teachers.filter(t => !t.IsActive).length;
+    const activeTeachers = teachers.filter(t => t.isActive).length;
+    const inactiveTeachers = teachers.filter(t => !t.isActive).length;
     const totalSpecialties = specialties.length;
 
 
     const teachersBySpecialty = specialties.map(specialty => ({
-      specialtyId: specialty.SpecialtyId,
-      specialtyName: specialty.SpecialtyName,
-      teacherCount: teachers.filter(t => t.SpecialtyId === specialty.SpecialtyId).length
+      specialtyId: specialty.id,
+      specialtyName: specialty.name,
+      teacherCount: teachers.filter(t => t.specialtyId === specialty.id).length
     }));
 
     return {
@@ -38,34 +38,34 @@ export async function getTeacherAnalytics() {
 }
 
 // دالة مساعدة لجلب معلم واحد بالـ ID
-export async function getTeacherById(teacherId: number): Promise<Teacher | null> {
-  try {
-    const teachers = await getTeacher();
-    return teachers.find(teacher => teacher.Id === teacherId) || null;
-  } catch (error) {
-    console.error("خطأ في جلب بيانات المعلم:", error);
-    return null;
-  }
-}
+// export async function getTeacherById(teacherId: number): Promise<Teacher | null> {
+//   try {
+//     const teachers = await getTeacher();
+//     return teachers.find(teacher => teacher.Id === teacherId) || null;
+//   } catch (error) {
+//     console.error("خطأ في جلب بيانات المعلم:", error);
+//     return null;
+//   }
+// }
 
 // دالة مساعدة لجلب المعلمين حسب التخصص
-export async function getTeachersBySpecialty(specialtyId: number): Promise<Teacher[]> {
-  try {
-    const teachers = await getTeacher();
-    return teachers.filter(teacher => teacher.SpecialtyId === specialtyId);
-  } catch (error) {
-    console.error("خطأ في جلب المعلمين حسب التخصص:", error);
-    return [];
-  }
-}
+// export async function getTeachersBySpecialty(specialtyId: number): Promise<Teacher[]> {
+//   try {
+//     const teachers = await getTeacher();
+//     return teachers.filter(teacher => teacher.SpecialtyId === specialtyId);
+//   } catch (error) {
+//     console.error("خطأ في جلب المعلمين حسب التخصص:", error);
+//     return [];
+//   }
+// }
 
 export async function getSpecialtyName  (id: number)  {
   const AllSpecialties =  await getTeacherAnalytics();
-  return AllSpecialties.specialties.find(s => s.SpecialtyId === id)?.SpecialtyName || "غير محدد";
+  return AllSpecialties.specialties.find(s => s.id === id)?.name || "غير محدد";
 };
 
 export async function getQualificationBySpecialtyId  (id: number) {
   const AllSpecialties =  await getTeacherAnalytics();
-  return AllSpecialties.specialties.find(s => s.SpecialtyId === id)?.Qualification || "غير متوفر";
+  return AllSpecialties.specialties.find(s => s.id === id)?.qualification || "غير متوفر";
 };
 

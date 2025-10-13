@@ -4,6 +4,7 @@ import { getTeacherAnalytics } from "./api-providers";
 import { TeacherTable } from "./TeachersTable";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
+import { SelectDemo } from "./select";
 
 export default async function TeacherPage() {
   // const teacherData = await getTeacherData();
@@ -17,6 +18,10 @@ export default async function TeacherPage() {
         <div className="mb-8">
           <h2 className="text-xl font-semibold text-gray-800 mb-4">إحصائيات المعلمين</h2>
           <DashboardCards />
+        </div>
+
+        <div className="m-10">
+          <SelectDemo/>
         </div>
 
         <div>

@@ -1,12 +1,12 @@
 export interface User {
   UserId: number;
-  UserName: string;
-  Email: string;
-  RoleID: number;
-  Phone: string;
-  Password?: string; // علامة الاستفهام تعني أن هذا الحقل اختياري
-  DateOfBirth: string;
-  IsActive: boolean;
-  Address: string;
+  userName: string;
+  email: string;
+  roleID: number;
+  phone: string;
+  password?: string;
+  dateOfBirth: string;
+  isActive: boolean;
+  address: string;
   gender: string;
 }

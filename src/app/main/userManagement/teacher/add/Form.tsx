@@ -1,12 +1,14 @@
 "use client";
 import React, { useEffect, useMemo, useRef, useState } from "react";
-import { useSearchParams } from "next/navigation";
-import { Teacher } from "@/types/teacher";
+import { useSearchParams, useRouter } from "next/navigation";
+import { Teacher, TeacherCreationPayload } from "@/types/teacher";
 import { Specialty } from "@/types/specialty";
+import Link from "next/link";
+import { addTeacher, updateTeacher } from "@/lib/api";
 
 
 interface BasicInfo {
-  fullName: string;
+  name: string;
   gender: "male" | "female";
   dateOfBirth: string;
   files: File[];
@@ -15,7 +17,7 @@ interface BasicInfo {
 interface ProfessionalInfo {
 
   specialtyId: string;
-  qualification: string;
+  qualification?: string;
   salary: number | string;
 }
 
@@ -32,13 +34,13 @@ interface ContactInfo {
 
 type TeacherRecord = Teacher & {
   UserId: number;
-  UserName: string;
-  Email: string;
-  Phone: string;
-  Password?: string;
-  DateOfBirth: string;
-  IsActive: boolean;
-  Address: string;
+  name: string;
+  email: string;
+  phone: string;
+  password?: string;
+  dateOfBirth: string;
+  isActive: boolean;
+  address: string;
   gender: string;
 };
 
@@ -58,7 +60,7 @@ interface FormProps {
 const App: React.FC<FormProps> = ({ data }) => {
   // حالات النموذج
   const [basicInfo, setBasicInfo] = useState<BasicInfo>({
-    fullName: "",
+    name: "",
     gender: "male",
     dateOfBirth: "",
     files: [],
@@ -87,8 +89,11 @@ const App: React.FC<FormProps> = ({ data }) => {
     type: "success" | "error";
     text: string;
   } | null>(null);
+
+  const [isLoading, setIsLoading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const searchParams = useSearchParams();
+  const router = useRouter();
   const idParam = searchParams.get("id");
   const selectedTeacherId = useMemo(() => {
     if (!idParam) return null;
@@ -104,7 +109,7 @@ const App: React.FC<FormProps> = ({ data }) => {
   // المعلّم المحدد في وضع التعديل
   const selectedTeacher: TeacherRecord | undefined = useMemo(() => {
     if (!selectedTeacherId) return undefined;
-    const found = data?.teachers?.find((t) => t.Id === selectedTeacherId || (hasUserId(t) && t.UserId === selectedTeacherId));
+    const found = data?.teachers?.find((t) => t.id === selectedTeacherId || (hasUserId(t) && t.UserId === selectedTeacherId));
     return found as unknown as TeacherRecord | undefined;
   }, [data, selectedTeacherId]);
 
@@ -114,30 +119,30 @@ const App: React.FC<FormProps> = ({ data }) => {
 
     setBasicInfo(prev => ({
       ...prev,
-      fullName: selectedTeacher.UserName || "",
+      name: selectedTeacher.userName || "",
       gender: (selectedTeacher.gender === "female" ? "female" : "male"),
-      dateOfBirth: selectedTeacher.DateOfBirth ? String(selectedTeacher.DateOfBirth) : "",
+      dateOfBirth: selectedTeacher.dateOfBirth ? String(selectedTeacher.dateOfBirth) : "",
       files: [],
     }));
 
     setProfessionalInfo(prev => ({
       ...prev,
-      specialtyId: String(selectedTeacher.SpecialtyId ?? ""),
-      qualification: "", // غير متوفر مباشرة في Teacher، يمكن ربطه من التخصص إذا لزم
-      salary: selectedTeacher.Salary ?? "",
+      specialtyId: String(selectedTeacher.specialtyId ?? ""),
+      qualification: String(selectedTeacher.specialtyId ?? ""),
+      salary: selectedTeacher.salary ?? "",
     }));
 
     setLoginDetails(prev => ({
       ...prev,
-      password: selectedTeacher.Password || "",
-      isActive: Boolean(selectedTeacher.IsActive),
+      password: selectedTeacher.password || "",
+      isActive: Boolean(selectedTeacher.isActive),
     }));
 
     setContactInfo(prev => ({
       ...prev,
-      phone: selectedTeacher.Phone || "",
-      email: selectedTeacher.Email || "",
-      address: selectedTeacher.Address || "",
+      phone: selectedTeacher.phone || "",
+      email: selectedTeacher.email || "",
+      address: selectedTeacher.address || "",
     }));
   }, [selectedTeacher]);
 
@@ -172,7 +177,20 @@ const App: React.FC<FormProps> = ({ data }) => {
     if (section === "basic") {
       setBasicInfo({ ...basicInfo, [field]: nextValue as never });
     } else if (section === "professional") {
-      setProfessionalInfo({ ...professionalInfo, [field]: nextValue as never });
+      // إذا تغيّر التخصص، حدّث المؤهل المرتبط بهذا التخصص تلقائياً
+      if (field === "specialtyId") {
+        const selectedId = String(nextValue);
+        const selectedSpecialty = data?.specialties?.find(
+          (s) => String(s.id) === selectedId
+        );
+        setProfessionalInfo({
+          ...professionalInfo,
+          specialtyId: selectedId,
+          qualification: selectedSpecialty ? String(selectedSpecialty.qualification) : "",
+        });
+      } else {
+        setProfessionalInfo({ ...professionalInfo, [field]: nextValue as never });
+      }
     } else if (section === "login") {
       setLoginDetails({ ...loginDetails, [field]: nextValue as never });
     } else if (section === "contact") {
@@ -181,21 +199,98 @@ const App: React.FC<FormProps> = ({ data }) => {
   };
 
   // معالجة إرسال النموذج
-  const handleSubmit = (e: React.FormEvent<HTMLButtonElement>) => {
+  const handleSubmit = async (e: React.FormEvent) => { 
     e.preventDefault();
-    console.log("تم إرسال البيانات:", {
-      basicInfo,
-      professionalInfo,
-      loginDetails,
-      contactInfo,
-    });
-    setMessage({ type: "success", text: "تم حفظ النموذج بنجاح!" });
+  
+    const payload: TeacherCreationPayload = {
+      userName: basicInfo.name,
+      gender: basicInfo.gender,
+      dateOfBirth: basicInfo.dateOfBirth,
+      specialtyId: professionalInfo.specialtyId,
+      roleID:1,
+      // يجب تحويل الراتب إلى رقم فقط إذا كنت متأكدًا أنه رقم صالح، 
+      // وإلا فإرساله كـ string واتركه لـ API ليقوم بتحويله (كما فعلنا في api.ts)
+      salary: professionalInfo.salary, 
+      password: loginDetails.password,
+      isActive: loginDetails.isActive,
+      phone: contactInfo.phone,
+      email: contactInfo.email,
+      address: contactInfo.address,
+    };
+    console.log(payload)
+  
+    if (
+      !payload.userName.trim() ||
+      !payload.email.trim() ||
+      !payload.specialtyId||
+      !payload.address.trim()||
+      !payload.dateOfBirth||
+      !payload.gender||
+      !payload.phone.trim()||
+      !payload.password||
+      !payload.salary
+    ) {
+      setMessage({ type: "error", text: "الرجاء تعبئة جميع الحقول." });
+      return;
+    }
+    console.log(payload)
+    // 3. استدعاء API
+    setIsLoading(true);
+    setMessage(null);
+    
+    try {
+      if (isEditMode && selectedTeacherId) {
+      
+        const updatePayload = {
+          id: selectedTeacherId,
+          ...payload,
+        } as const;
+        const updated = await updateTeacher(updatePayload);
+        setMessage({
+          type: "success",
+          text: `تم تحديث بيانات المعلم ${updated.userName || ''} بنجاح! ✅`,
+        });
+        
+        // إعادة التوجيه إلى الصفحة الرئيسية بعد ثانيتين
+        setTimeout(() => {
+          router.push('/main/userManagement/teacher/main');
+        }, 1500);
+        
+      } else {
+        // إضافة
+        const addedTeacher = await addTeacher(payload);
+        setMessage({ 
+          type: "success", 
+          text: `تم إضافة المعلم ${addedTeacher.userName || 'الجديد'} بنجاح! 👋` 
+        });
+        handleReset();
+        
+        // إعادة التوجيه إلى الصفحة الرئيسية بعد ثانيتين
+        setTimeout(() => {
+          router.push('/main/userManagement/teacher/main');
+        }, 2000);
+      }
+      
+    } catch (error) {
+      // الفشل
+      const errorMessage = error instanceof Error ? error.message : 'حدث خطأ غير متوقع أثناء الاتصال بالـ API.';
+      setMessage({ type: "error", text: `فشل الإضافة: ${errorMessage}` });
+      
+      // إخفاء رسالة الخطأ بعد 3 ثواني
+      setTimeout(() => {
+        setMessage(null);
+      }, 3000);
+      
+    } finally {
+      setIsLoading(false);
+      
+    }
   };
 
   // معالجة إعادة تعيين النموذج
   const handleReset = () => {
     setBasicInfo({
-      fullName: "",
+      name: "",
       gender: "male",
       
       dateOfBirth: "",
@@ -229,14 +324,18 @@ const App: React.FC<FormProps> = ({ data }) => {
           >
             {isEditMode ? "تحديث" : "حفظ"}
           </button>
-          <button
-            onClick={() =>
-              setMessage({ type: "error", text: "تم إلغاء العملية." })
-            }
-            className="px-6 py-2 text-gray-200 font-semibold bg-red-600 rounded-lg hover:bg-red-700 transition-colors"
+          <Link 
+          href="/main/userManagement/teacher/main"
+          >
+           <button
+            // onClick={() =>
+            //   setMessage({ type: "error", text: "تم إلغاء العملية." })
+            // }
+             className="px-6 py-2 text-gray-200 font-semibold bg-red-600 rounded-lg hover:bg-red-700 transition-colors"
           >
             إلغاء
           </button>
+          </Link>
           <button
             onClick={handleReset}
             className="px-6 py-2 text-gray-600 font-semibold bg-gray-200 rounded-lg hover:bg-gray-300 transition-colors"
@@ -268,16 +367,16 @@ const App: React.FC<FormProps> = ({ data }) => {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
                 <label
-                  htmlFor="fullName"
+                  htmlFor="name"
                   className="block text-sm font-medium text-gray-700 mb-1"
                 >
                   اسم المعلم
                 </label>
                 <input
                   type="text"
-                  id="fullName"
-                  value={basicInfo.fullName}
-                  onChange={(e) => handleChange(e, "basic", "fullName")}
+                  id="name"
+                  value={basicInfo.name}
+                  onChange={(e) => handleChange(e, "basic", "name")}
                   placeholder="الاسم الرباعي للمعلم"
                   className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-lime-700"
                 />
@@ -408,8 +507,8 @@ const App: React.FC<FormProps> = ({ data }) => {
                 >
                   <option value="">اختر التخصص</option>
                   {data?.specialties?.map((s) => (
-                    <option key={s.SpecialtyId} value={String(s.SpecialtyId)}>
-                      {s.SpecialtyName}
+                    <option key={s.id} value={String(s.id)}>
+                      {s.name}
                     </option>
                   ))}
                 </select>
@@ -429,8 +528,8 @@ const App: React.FC<FormProps> = ({ data }) => {
                 >
                   <option value="">اختر المؤهل</option>
                   {data?.specialties?.map((s) => (
-                    <option key={s.SpecialtyId} value={String(s.Qualification)}>
-                      {s.Qualification}
+                    <option key={s.id} value={String(s.id)}>
+                      {s.qualification}
                     </option>
                   ))}
                   {/* <option value="دبلوم">دبلوم</option>
