@@ -2,7 +2,15 @@ import { Role } from "@/types/role";
 import { Specialty } from "@/types/specialty";
 import { Teacher, TeacherCreationPayload, TeacherUpdatePayload } from "@/types/teacher";
 import { Guardian } from "@/types/guardian";
-// Node-only imports removed to avoid bundling in client
+// <<<<<<< changes-musab
+// // Node-only imports removed to avoid bundling in client
+// =======
+// import { isUtf8 } from "buffer";
+// import * as fs from "fs/promises";
+// import path from "path";
+// import { json } from "stream/consumers";
+// import { Relation } from "@/types/relation";
+// >>>>>>> master
 
 // Delegate reading mock files to server-only helper when needed
 import { readJsonFile } from "@/lib/server-files";
@@ -199,6 +207,10 @@ export async function getRoles(): Promise<Role[]> {
 
 export async function getGuardian(): Promise<Guardian[]> {
   return fetchData<Guardian[]>("guardian.json");
+}
+
+export async function getRelation(): Promise<Relation[]> {
+  return fetchData<Relation[]>("relation.json");
 }
 
 // export const api = {
