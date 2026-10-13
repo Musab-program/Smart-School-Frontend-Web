@@ -1,12 +1,11 @@
-// File: app/(auth)/login/page.tsx
-import { SimpleRegistrationForm } from './login-form';
+// File: app/auth/login/page.tsx
+import { Suspense } from "react";
+import { LoginForm } from "./login-form";
 
-const LoginPage = () => {
+export default function LoginPage() {
   return (
-    <section>
-      <SimpleRegistrationForm/>
-    </section>
+    <Suspense fallback={<div className="min-h-screen flex items-center justify-center">جاري التحميل...</div>}>
+      <LoginForm />
+    </Suspense>
   );
-};
-
-export default LoginPage;
+}

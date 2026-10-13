@@ -112,18 +112,18 @@ export function TeachersTable({
                   
                   // منطق عرض حقل الحذف
                   ) : key === 'delete_action' ? (
-                    <Button size="icon" variant="ghost" className='text-red-500 hover:bg-red-50' onClick={() => onDelete(teacher.userId)}>
+                    <Button size="icon" variant="ghost" className='text-red-500 hover:bg-red-50' onClick={() => onDelete(teacher.userId ?? teacher.id ?? 0)}>
                       <Trash2 size={18} />
                     </Button>
 
                   // منطق عرض حقل التخصص
                   ) : key === 'SpecialtyId' ? (
-                    getSpecialtyName(teacher.SpecialtyId)
+                    getSpecialtyName(teacher.SpecialtyId ?? teacher.specialtyId ?? 0)
                   
                   // منطق عرض حقل المؤهل
                   ) : key === 'Qualification' ? ( 
                     <span className="font-semibold text-gray-800">
-                        {getQualificationBySpecialtyId(teacher.SpecialtyId)}
+                        {getQualificationBySpecialtyId(teacher.SpecialtyId ?? teacher.specialtyId ?? 0)}
                     </span>
 
                   // منطق عرض حقل الحالة (نشط/غير نشط)

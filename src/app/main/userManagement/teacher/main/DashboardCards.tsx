@@ -1,10 +1,21 @@
+"use client"
+
 import { UserStar, Users, UserMinus, GraduationCap } from 'lucide-react';
 import { Card, CardHeader, CardTitle } from '@/components/ui/card';
-import { getTeacherData } from '@/lib/ready-data/teacher-data';
 
-const DashboardCards = async () => {
-  const teacherData = await getTeacherData();
+interface DashboardCardsProps {
+  totalTeachers: number;
+  activeTeachers: number;
+  inactiveTeachers: number;
+  totalSpecialties: number;
+}
 
+const DashboardCards = ({ 
+  totalTeachers, 
+  activeTeachers, 
+  inactiveTeachers, 
+  totalSpecialties 
+}: DashboardCardsProps) => {
   return (
     <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 mb-6">
       <Card className="shadow-md hover:shadow-lg transform transition-all duration-300 drop-shadow-lg text-right">
@@ -13,7 +24,7 @@ const DashboardCards = async () => {
           <CardTitle className="text-lg font-medium">
             إجمالي المعلمين
             <br />
-            <div className="text-2xl font-bold text-blue-600">{teacherData.totalTeachers}</div>
+            <div className="text-2xl font-bold text-blue-600">{totalTeachers}</div>
             <div className="text-sm text-gray-500 mt-1">العدد الكلي للمعلمين</div>
           </CardTitle>
         </CardHeader>
@@ -25,10 +36,10 @@ const DashboardCards = async () => {
           <CardTitle className="text-lg font-medium">
             معلمون نشطون
             <br />
-            <div className="text-2xl font-bold text-green-600">{teacherData.activeTeachers}</div>
+            <div className="text-2xl font-bold text-green-600">{activeTeachers}</div>
             <div className="text-sm text-gray-500 mt-1">
-              {teacherData.totalTeachers > 0 
-                ? `${Math.round((teacherData.activeTeachers / teacherData.totalTeachers) * 100)}% من المجموع`
+              {totalTeachers > 0 
+                ? `${Math.round((activeTeachers / totalTeachers) * 100)}% من المجموع`
                 : 'لا يوجد معلمين'
               }
             </div>
@@ -42,7 +53,7 @@ const DashboardCards = async () => {
           <CardTitle className="text-lg font-medium">
             غير نشطين
             <br />
-            <div className="text-2xl font-bold text-red-600">{teacherData.inactiveTeachers}</div>
+            <div className="text-2xl font-bold text-red-600">{inactiveTeachers}</div>
             <div className="text-sm text-gray-500 mt-1">حسابات تحتاج تفعيل</div>
           </CardTitle>
         </CardHeader>
@@ -54,7 +65,7 @@ const DashboardCards = async () => {
           <CardTitle className="text-lg font-medium">
             التخصصات
             <br />
-            <div className="text-2xl font-bold text-purple-600">{teacherData.totalSpecialties}</div>
+            <div className="text-2xl font-bold text-purple-600">{totalSpecialties}</div>
             <div className="text-sm text-gray-500 mt-1">عدد التخصصات المتاحة</div>
           </CardTitle>
         </CardHeader>

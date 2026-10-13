@@ -48,7 +48,7 @@ export function DataTableDemo({ data, specialties }: DataTableDemoProps) {
   const specialtyIdToName = React.useMemo(() => {
     const map = new Map<number, string>();
     specialties.forEach((s) => {
-      map.set(s.SpecialtyId, s.SpecialtyName);
+      map.set(s.SpecialtyId ?? s.id, s.SpecialtyName ?? s.name);
     });
     return map;
   }, [specialties]);
@@ -56,7 +56,7 @@ export function DataTableDemo({ data, specialties }: DataTableDemoProps) {
   const QualificationIdToName = React.useMemo(() => {
     const map = new Map<number, string>();
     specialties.forEach((s) => {
-      map.set(s.SpecialtyId, s.Qualification);
+      map.set(s.SpecialtyId ?? s.id, s.Qualification ?? s.qualification);
     });
     return map;
   }, [specialties]);

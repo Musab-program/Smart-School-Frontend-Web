@@ -13,7 +13,7 @@ import {
   useReactTable,
   VisibilityState,
 } from "@tanstack/react-table"
-import { ArrowUpDown, ChevronDown, Pencil, RefreshCcw, Trash2 } from "lucide-react"
+import { ArrowUpDown, ChevronDown, Pencil, Trash2 } from "lucide-react"
 import Link from "next/link"
 
 import { Button } from "@/components/ui/button"
@@ -25,6 +25,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { Input } from "@/components/ui/input"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import {
   Table,
   TableBody,
@@ -96,7 +97,7 @@ export function TeacherTable({ data, specialties, onTeacherDeleted }: TeacherTab
       
       // إعادة تحديث البيانات
       if (onTeacherDeleted) {
-        onTeacherDeleted();
+        await onTeacherDeleted();
       }
       
       // إخفاء الإشعار بعد 3 ثواني
@@ -124,6 +125,8 @@ export function TeacherTable({ data, specialties, onTeacherDeleted }: TeacherTab
   const columnIdToArabicLabel = React.useMemo(() => ({
     userName: "اسم المعلم",
     isActive: "الحالة",
+    gender: "الجنس",
+    dateOfBirth: "تاريخ الميلاد",
     address: "العنوان",
     email: "البريد الإلكتروني",
     phone: "الهاتف",
@@ -199,6 +202,39 @@ export function TeacherTable({ data, specialties, onTeacherDeleted }: TeacherTab
       },
     },
     {
+      accessorKey: "gender",
+      header: ({ column }) => {
+        return (
+          <Button
+            variant="ghost"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          >
+            الجنس
+            <ArrowUpDown />
+          </Button>
+        )
+      },
+      cell: ({ row }) => <div className="text-center">{row.getValue("gender") || "-"}</div>,
+    },
+    {
+      accessorKey: "dateOfBirth",
+      header: ({ column }) => {
+        return (
+          <Button
+            variant="ghost"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          >
+            تاريخ الميلاد
+            <ArrowUpDown />
+          </Button>
+        )
+      },
+      cell: ({ row }) => {
+        const val = row.getValue("dateOfBirth") as string;
+        return <div className="text-center text-sm text-gray-600">{val ? new Date(val).toLocaleDateString("ar-EG") : "-"}</div>;
+      },
+    },
+    {
       accessorKey: "address",
       header: ({ column }) => {
         return (
@@ -256,12 +292,17 @@ export function TeacherTable({ data, specialties, onTeacherDeleted }: TeacherTab
           </Button>
         )
       },
+      filterFn: (row, columnId, filterValue) => {
+        if (!filterValue || filterValue === "ALL") return true;
+        const id = row.getValue(columnId);
+        return String(id) === String(filterValue);
+      },
       cell: ({ row }) => {
         const id = row.getValue("specialtyId") as number
         const name = specialtyIdToName.get(id) || "غير محدد"
         return (
           <div className="flex justify-center">
-            <span className="py-1 px-3 rounded-full text-xs font-medium text-center">
+            <span className="py-1 px-3 rounded-full text-xs font-medium text-center bg-gray-100">
               {name}
             </span>
           </div>
@@ -281,12 +322,18 @@ export function TeacherTable({ data, specialties, onTeacherDeleted }: TeacherTab
           </Button>
         ) 
       },
-       cell: ({ row }) => {
+      filterFn: (row, columnId, filterValue) => {
+        if (!filterValue || filterValue === "ALL") return true;
+        const specId = row.getValue("specialtyId") as number;
+        const qual = QualificationIdToName.get(specId) || "";
+        return qual === filterValue;
+      },
+      cell: ({ row }) => {
         const id = row.getValue("specialtyId") as number
         const name = QualificationIdToName.get(id) || "غير محدد"
         return (
           <div className="flex justify-center">
-            <span className="py-1 px-3 rounded-full text-xs font-medium text-center">
+            <span className="py-1 px-3 rounded-full text-xs font-medium text-center bg-blue-50 text-blue-700">
               {name}
             </span>
           </div>
@@ -383,7 +430,11 @@ export function TeacherTable({ data, specialties, onTeacherDeleted }: TeacherTab
     []
   )
   const [columnVisibility, setColumnVisibility] =
-    React.useState<VisibilityState>({})
+    React.useState<VisibilityState>({
+      dateOfBirth: false,
+      address: false,
+      gender: false,
+    })
   const [rowSelection, setRowSelection] = React.useState({})
 
   const table = useReactTable({
@@ -418,7 +469,60 @@ export function TeacherTable({ data, specialties, onTeacherDeleted }: TeacherTab
         </div>
       )}
       
-      <div className="flex items-center py-4 px-1">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 py-4 px-1">
+        <div className="flex flex-wrap items-center gap-3 w-full md:w-auto">
+          <Input
+            placeholder="البحث في الأسماء..."
+            value={(table.getColumn("userName")?.getFilterValue() as string) ?? ""}
+            onChange={(event) =>
+              table.getColumn("userName")?.setFilterValue(event.target.value)
+            }
+            className="w-full sm:w-60 text-right"
+          />
+
+          <div className="w-full sm:w-48">
+            <Select
+              value={(table.getColumn("specialtyId")?.getFilterValue() as string) ?? "ALL"}
+              onValueChange={(val) =>
+                table.getColumn("specialtyId")?.setFilterValue(val === "ALL" ? undefined : val)
+              }
+            >
+              <SelectTrigger className="w-full text-sm">
+                <SelectValue placeholder="تصفية بالتخصص" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="ALL">كافة التخصصات</SelectItem>
+                {specialties.map((s) => (
+                  <SelectItem key={s.id} value={String(s.id)}>
+                    {s.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div className="w-full sm:w-48">
+            <Select
+              value={(table.getColumn("qualification")?.getFilterValue() as string) ?? "ALL"}
+              onValueChange={(val) =>
+                table.getColumn("qualification")?.setFilterValue(val === "ALL" ? undefined : val)
+              }
+            >
+              <SelectTrigger className="w-full text-sm">
+                <SelectValue placeholder="تصفية بالمؤهل" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="ALL">كافة المؤهلات</SelectItem>
+                {Array.from(new Set(specialties.map((s) => s.qualification).filter(Boolean))).map((q) => (
+                  <SelectItem key={q} value={q}>
+                    {q}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+        </div>
+
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="outline" className="mr-auto">
@@ -445,15 +549,6 @@ export function TeacherTable({ data, specialties, onTeacherDeleted }: TeacherTab
               })}
           </DropdownMenuContent>
         </DropdownMenu>
-        
-        <Input
-          placeholder="البحث في الاسماء"
-          value={(table.getColumn("userName")?.getFilterValue() as string) ?? ""}
-          onChange={(event) =>
-            table.getColumn("userName")?.setFilterValue(event.target.value)
-          }
-          className="max-w-sm text-right"
-        />
       </div>
       <div className="overflow-hidden rounded-md border shadow-lg ">
       <Table className="px-10">

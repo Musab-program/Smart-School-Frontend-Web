@@ -1,8 +1,29 @@
 import { getSpecialty, getTeacher } from "@/lib/api";
 import { Specialty } from "@/types/specialty";
 import { Teacher } from "@/types/teacher";
+import { getCachedData, setCachedData, CACHE_KEYS } from "@/lib/data-cache";
 
-export async function getTeacherAnalytics() {
+interface TeacherAnalyticsResult {
+  teachers: Teacher[];
+  specialties: Specialty[];
+  totalTeachers: number;
+  activeTeachers: number;
+  inactiveTeachers: number;
+  totalSpecialties: number;
+  teachersBySpecialty: Array<{
+    specialtyId: number;
+    specialtyName: string;
+    teacherCount: number;
+  }>;
+  activationRate: string;
+  averageTeachersPerSpecialty: string;
+}
+
+export async function getTeacherAnalytics(): Promise<TeacherAnalyticsResult> {
+  // Check cache first
+  const cached = getCachedData<TeacherAnalyticsResult>(CACHE_KEYS.TEACHER_ANALYTICS);
+  if (cached) return cached;
+
   try {
     const teachers: Teacher[] = await getTeacher();
     const specialties: Specialty[] = await getSpecialty();
@@ -12,14 +33,13 @@ export async function getTeacherAnalytics() {
     const inactiveTeachers = teachers.filter(t => !t.isActive).length;
     const totalSpecialties = specialties.length;
 
-
     const teachersBySpecialty = specialties.map(specialty => ({
       specialtyId: specialty.id,
       specialtyName: specialty.name,
       teacherCount: teachers.filter(t => t.specialtyId === specialty.id).length
     }));
 
-    return {
+    const result: TeacherAnalyticsResult = {
       teachers,
       specialties,
       totalTeachers,
@@ -27,45 +47,25 @@ export async function getTeacherAnalytics() {
       inactiveTeachers,
       totalSpecialties,
       teachersBySpecialty,
-      // إحصائيات إضافية
       activationRate: totalTeachers > 0 ? (activeTeachers / totalTeachers * 100).toFixed(1) : "0",
       averageTeachersPerSpecialty: totalSpecialties > 0 ? (totalTeachers / totalSpecialties).toFixed(1) : "0"
     };
+
+    // Save to cache
+    setCachedData(CACHE_KEYS.TEACHER_ANALYTICS, result);
+    return result;
   } catch (error) {
     console.error("خطأ في جلب بيانات المعلمين:", error);
     throw new Error("فشل في جلب بيانات المعلمين");
   }
 }
 
-// دالة مساعدة لجلب معلم واحد بالـ ID
-// export async function getTeacherById(teacherId: number): Promise<Teacher | null> {
-//   try {
-//     const teachers = await getTeacher();
-//     return teachers.find(teacher => teacher.Id === teacherId) || null;
-//   } catch (error) {
-//     console.error("خطأ في جلب بيانات المعلم:", error);
-//     return null;
-//   }
-// }
-
-// دالة مساعدة لجلب المعلمين حسب التخصص
-// export async function getTeachersBySpecialty(specialtyId: number): Promise<Teacher[]> {
-//   try {
-//     const teachers = await getTeacher();
-//     return teachers.filter(teacher => teacher.SpecialtyId === specialtyId);
-//   } catch (error) {
-//     console.error("خطأ في جلب المعلمين حسب التخصص:", error);
-//     return [];
-//   }
-// }
-
-export async function getSpecialtyName  (id: number)  {
-  const AllSpecialties =  await getTeacherAnalytics();
+export async function getSpecialtyName(id: number) {
+  const AllSpecialties = await getTeacherAnalytics();
   return AllSpecialties.specialties.find(s => s.id === id)?.name || "غير محدد";
-};
+}
 
-export async function getQualificationBySpecialtyId  (id: number) {
-  const AllSpecialties =  await getTeacherAnalytics();
+export async function getQualificationBySpecialtyId(id: number) {
+  const AllSpecialties = await getTeacherAnalytics();
   return AllSpecialties.specialties.find(s => s.id === id)?.qualification || "غير متوفر";
-};
-
+}

@@ -1,4 +1,13 @@
-export interface Guardian extends User {
-  Id: number | null;
-  relationship: string; // null يعني أن القيمة يمكن أن تكون فارغة
+import { User } from "./user";
+
+export interface Guardian extends Omit<User, "id"> {
+  id?: number | null;
+  Id?: number | null;
+  userId?: number;
+  relationship?: string;
+  relationTypeId?: number;
+  relationType?: { id: number; name: string };
+  secondryPhone?: string;
 }
+
+

@@ -11,7 +11,7 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
         <div className="flex flex-1 pt-20">
           <AppSidebar />
           <SidebarInset>
-            <main className="flex-1 p-4 bg-white">
+            <main className="flex-1 p-4 md:p-6 bg-slate-50/50 min-h-[calc(100vh-5rem)]">
               {children}
             </main>
           </SidebarInset>

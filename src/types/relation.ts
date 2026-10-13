@@ -1,4 +1,5 @@
 export interface Relation {
   id: number;
-  relationship: string;
+  name: string;
+  relationship?: string;
 }

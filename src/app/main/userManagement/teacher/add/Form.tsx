@@ -207,7 +207,7 @@ const App: React.FC<FormProps> = ({ data }) => {
       gender: basicInfo.gender,
       dateOfBirth: basicInfo.dateOfBirth,
       specialtyId: professionalInfo.specialtyId,
-      roleID:1,
+      roleID: 2,
       // يجب تحويل الراتب إلى رقم فقط إذا كنت متأكدًا أنه رقم صالح، 
       // وإلا فإرساله كـ string واتركه لـ API ليقوم بتحويله (كما فعلنا في api.ts)
       salary: professionalInfo.salary, 
@@ -217,20 +217,19 @@ const App: React.FC<FormProps> = ({ data }) => {
       email: contactInfo.email,
       address: contactInfo.address,
     };
-    console.log(payload)
-  
     if (
       !payload.userName.trim() ||
       !payload.email.trim() ||
-      !payload.specialtyId||
-      !payload.address.trim()||
-      !payload.dateOfBirth||
-      !payload.gender||
-      !payload.phone.trim()||
-      !payload.password||
-      !payload.salary
+      !payload.specialtyId ||
+      !payload.address.trim() ||
+      !payload.dateOfBirth ||
+      !payload.gender ||
+      !payload.phone.trim() ||
+      (!isEditMode && !payload.password) ||
+      payload.salary === "" ||
+      payload.salary === undefined
     ) {
-      setMessage({ type: "error", text: "الرجاء تعبئة جميع الحقول." });
+      setMessage({ type: "error", text: "الرجاء تعبئة جميع الحقول المطلوبة." });
       return;
     }
     console.log(payload)
@@ -518,25 +517,17 @@ const App: React.FC<FormProps> = ({ data }) => {
                   htmlFor="qualification"
                   className="block text-sm font-medium text-gray-700 mb-1"
                 >
-                  المؤهل
+                  المؤهل الأكاديمي
                 </label>
-                <select
+                <input
                   id="qualification"
+                  type="text"
                   value={professionalInfo.qualification}
                   onChange={(e) => handleChange(e, "professional", "qualification")}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-lime-700"
-                >
-                  <option value="">اختر المؤهل</option>
-                  {data?.specialties?.map((s) => (
-                    <option key={s.id} value={String(s.id)}>
-                      {s.qualification}
-                    </option>
-                  ))}
-                  {/* <option value="دبلوم">دبلوم</option>
-                  <option value="بكالوريوس">بكالوريوس</option>
-                  <option value="ماجستير">ماجستير</option>
-                  <option value="دكتوراه">دكتوراه</option> */}
-                </select>
+                  placeholder="المؤهل (يتم تعيينه تلقائياً حسب التخصص أو كتابته)"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-lime-700 bg-gray-50"
+                  readOnly
+                />
               </div>
               <div>
                 <label
