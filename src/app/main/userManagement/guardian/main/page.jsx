@@ -5,11 +5,10 @@ import React from "react";
 // import { getGuardianAnalytics } from "./api-providers";
 
 
-export default async function StudentsPage() {
-  // const guar = await getGuardianAnalytics();guardiansData={guar.guardians}
+export default function GuardiansPage() {
   return (
-    <div className="p-4">
-      {/* <DashboardCards /> */}
+    <div className="p-4" dir="rtl">
+      <DashboardCards />
       <GuardianTable />
     </div>
   );

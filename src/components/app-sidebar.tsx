@@ -13,6 +13,7 @@ import {
   CheckSquare,
   ChevronDown,
   GraduationCap,
+  BookOpen,
 } from "lucide-react";
 
 import {
@@ -37,7 +38,7 @@ import { cn } from "@/lib/utils";
 const items = [
   {
     title: "لوحة التحكم",
-    url: "/dashboard",
+    url: "/main/dashboard",
     icon: Home,
   },
   {
@@ -54,42 +55,69 @@ const items = [
       },
       {
         title: "اولياء الامور",
-        url: "/main/userManagement/guardian/main"
+        url: "/main/userManagement/guardian/main",
+      },
+      {
+        title: "حسابات المستخدمين",
+        url: "/main/userManagement/users",
       },
     ],
   },
   {
-    title: "أدارة الصلاحيات",
-    url: "/permissions",
-    icon: Shield,
+    title: "التخصصات الأكاديمية",
+    url: "/main/specialties/main",
+    icon: GraduationCap,
   },
   {
     title: "الصفوف والمجموعات",
     icon: Book,
     subItems: [
       {
-        title: "المجموعات",
-        url: "/groups",
+        title: "الصفوف الدراسية",
+        url: "/main/academic/grades",
       },
       {
-        title: "الصفوف",
-        url: "/classes",
+        title: "الشعب والمجموعات",
+        url: "/main/academic/groups",
       },
     ],
   },
   {
-    title: "الاختبارات",
-    url: "/exams",
+    title: "المناهج والخطة الدراسية",
+    icon: BookOpen,
+    subItems: [
+      {
+        title: "دليل المواد الدراسية",
+        url: "/main/academic/subjects",
+      },
+      {
+        title: "الخطة وتوزيع الحصص",
+        url: "/main/academic/curriculum",
+      },
+    ],
+  },
+  {
+    title: "التقييم والاختبارات",
     icon: FileText,
+    subItems: [
+      {
+        title: "جدول ونتائج الاختبارات",
+        url: "/main/academic/exams",
+      },
+      {
+        title: "الواجبات والتكاليف",
+        url: "/main/academic/assignments",
+      },
+    ],
   },
   {
     title: "جدول الحصص",
-    url: "/timetable",
+    url: "/main/academic/timetable",
     icon: Calendar,
   },
   {
     title: "حضور الطلاب",
-    url: "/attendance",
+    url: "/main/academic/attendance",
     icon: CheckSquare,
   },
 ];

@@ -30,7 +30,7 @@ import {
   updateGuardian,
   getGuardianById,
   type GuardianUpsertInput,
-} from "@/lib/Dia-api";
+} from "@/lib/api";
 // import { getGuardianById } from "../main/api-providers";
 
 // type CreateGuardianPayload = {
