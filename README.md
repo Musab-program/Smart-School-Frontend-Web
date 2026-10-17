@@ -191,3 +191,4 @@ Smart-School-Frontend-Web/
 <div align="center">
   <sub>تم التطوير بكل فخر بواسطة فريق المدرسة الذكية &copy; 2026</sub>
 </div>
+
